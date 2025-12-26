@@ -154,6 +154,33 @@
       pointer-events:none;
     }
 
+    /* Page 6 uses the main card, but as a flex column */
+.card6{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  /* IMPORTANT: allow children to shrink instead of clipping */
+  min-height: 0;
+}
+
+/* reduce vertical space used by page padding on all pages (helps 100% zoom) */
+.page{
+  padding: 20px 16px;   /* was bigger */
+}
+
+/* scene should take remaining height and shrink safely */
+.card6 .scene{
+  flex: 1;
+  min-height: 240px;    /* lower than before so it won't cut */
+  margin-top: 6px;
+}
+
+/* Optional: slightly reduce top heading spacing on page 6 */
+.card6 .center h1{ margin-bottom: 6px; }
+.card6 .center h3{ margin-bottom: 6px; }
+
+
     /* Page 6 uses main panel with its own layout (no extra nested scroll) */
     .panel6{
       width:min(880px, 100%);
@@ -698,7 +725,7 @@
 
       <!-- PAGE 6 -->
       <section class="page" id="p6">
-        <div class="panel6">
+        <div class="card card6">
           <div class="center" style="margin-top:2px;">
             <h1>Let’s celebrate 🎊</h1>
             <h3>Click the button to decorate</h3>
