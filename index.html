@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kaathambari's Birthday</title>
+
   <style>
     :root{
       --bg1:#fff1f7;
@@ -15,6 +16,12 @@
       --pink2:#ff8bc6;
       --shadow: 0 20px 60px rgba(27,10,27,.12);
       --radius: 22px;
+
+      --dark1:#120914;
+      --dark2:#2a0f2a;
+      --darkCard: rgba(25,10,30,.62);
+      --darkInk:#ffe7f4;
+      --darkMuted:#ffb9d8;
     }
 
     *{box-sizing:border-box}
@@ -23,35 +30,59 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--ink);
-      background: radial-gradient(1200px 800px at 20% 20%, var(--bg2), transparent 60%),
-                  radial-gradient(1200px 800px at 80% 80%, #ffd3e8, transparent 55%),
-                  linear-gradient(180deg, var(--bg1), #fff);
+      background:
+        radial-gradient(1200px 800px at 20% 20%, var(--bg2), transparent 60%),
+        radial-gradient(1200px 800px at 80% 80%, #ffd3e8, transparent 55%),
+        linear-gradient(180deg, var(--bg1), #fff);
       overflow:hidden;
+      transition: background .6s ease, color .6s ease;
     }
 
-    /* subtle floating hearts */
-    .bg-hearts{
-      position:fixed; inset:0; pointer-events:none; opacity:.25;
-      background-image:
-        radial-gradient(circle at 10% 20%, rgba(255,90,165,.35) 0 3px, transparent 4px),
-        radial-gradient(circle at 30% 70%, rgba(255,139,198,.35) 0 3px, transparent 4px),
-        radial-gradient(circle at 75% 30%, rgba(255,90,165,.25) 0 3px, transparent 4px),
-        radial-gradient(circle at 90% 60%, rgba(255,139,198,.25) 0 3px, transparent 4px);
-      filter: blur(.2px);
-      animation: drift 10s ease-in-out infinite alternate;
+    /* Party dark mode (used when Lights ON) */
+    body.party-dark{
+      color: var(--darkInk);
+      background:
+        radial-gradient(1200px 800px at 20% 20%, rgba(255,90,165,.18), transparent 60%),
+        radial-gradient(1200px 800px at 80% 80%, rgba(120,220,255,.12), transparent 55%),
+        linear-gradient(180deg, var(--dark1), var(--dark2));
     }
-    @keyframes drift{ from{transform:translateY(0)} to{transform:translateY(-12px)} }
+
+    /* Floating emoji layer (JS will inject many) */
+    .floating-layer{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+    .float-emoji{
+      position:absolute;
+      font-size: clamp(16px, 2.4vw, 28px);
+      opacity:.35;
+      filter: blur(.1px);
+      animation: floatUp linear forwards;
+      will-change: transform, opacity;
+    }
+    body.party-dark .float-emoji{ opacity:.28; }
+
+    @keyframes floatUp{
+      0%   { transform: translate3d(0, 30px, 0) rotate(0deg) scale(.95); opacity:0; }
+      10%  { opacity:.38; }
+      60%  { opacity:.38; }
+      100% { transform: translate3d(0, -120vh, 0) rotate(260deg) scale(1.08); opacity:0; }
+    }
 
     .wrap{
       height:100%;
       display:grid;
       place-items:center;
       padding:18px;
+      position:relative;
+      z-index:1; /* above emojis */
     }
 
     .app{
-      width:min(960px, 100%);
-      height:min(680px, 100%);
+      width:min(980px, 100%);
+      height:min(720px, 92vh);
       background:var(--card);
       border:1px solid rgba(255,90,165,.20);
       border-radius:var(--radius);
@@ -59,18 +90,28 @@
       position:relative;
       overflow:hidden;
       backdrop-filter: blur(10px);
+      transition: background .6s ease, border-color .6s ease;
+    }
+    body.party-dark .app{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,90,165,.18);
     }
 
     /* top ribbon */
     .ribbon{
       position:absolute; left:-60px; top:-60px;
       width:200px; height:200px;
-      background: radial-gradient(circle at 30% 30%, #fff, transparent 55%),
-                  linear-gradient(135deg, rgba(255,90,165,.45), rgba(255,139,198,.25));
+      background:
+        radial-gradient(circle at 30% 30%, #fff, transparent 55%),
+        linear-gradient(135deg, rgba(255,90,165,.45), rgba(255,139,198,.25));
       transform:rotate(18deg);
       border-radius:40px;
-      filter: blur(.2px);
       opacity:.9;
+      z-index:0;
+    }
+    body.party-dark .ribbon{
+      opacity:.35;
+      filter: saturate(1.1);
     }
 
     .page{
@@ -91,21 +132,29 @@
     }
 
     .card{
-      width:min(780px, 100%);
+      width:min(820px, 100%);
+      max-height: calc(92vh - 90px);
       background:rgba(255,255,255,.72);
       border:1px solid rgba(255,90,165,.18);
       border-radius:var(--radius);
       box-shadow: 0 14px 40px rgba(27,10,27,.10);
       padding:28px 20px;
       position:relative;
-      overflow:hidden;
+      overflow:auto; /* fixes cut top/bottom on smaller screens */
+      -webkit-overflow-scrolling: touch;
+    }
+    body.party-dark .card{
+      background: var(--darkCard);
+      border-color: rgba(255,139,198,.18);
+      box-shadow: 0 14px 40px rgba(0,0,0,.25);
     }
 
     .card::before{
       content:"";
       position:absolute; inset:-2px;
-      background: radial-gradient(900px 240px at 20% 0%, rgba(255,90,165,.15), transparent 60%),
-                  radial-gradient(900px 240px at 80% 100%, rgba(255,139,198,.15), transparent 60%);
+      background:
+        radial-gradient(900px 240px at 20% 0%, rgba(255,90,165,.15), transparent 60%),
+        radial-gradient(900px 240px at 80% 100%, rgba(255,139,198,.15), transparent 60%);
       pointer-events:none;
     }
 
@@ -113,7 +162,11 @@
     h1{font-size: clamp(28px, 4vw, 44px);}
     h2{font-size: clamp(22px, 3vw, 34px); color:var(--pink);}
     h3{font-size: clamp(16px, 2vw, 20px); color:var(--muted); font-weight:600;}
+    body.party-dark h2{ color:#ff8fc9; }
+    body.party-dark h3{ color: var(--darkMuted); }
+
     p{margin:10px 0; color:var(--muted); font-size: clamp(14px, 1.7vw, 16px);}
+    body.party-dark p{ color: rgba(255,231,244,.85); }
 
     .center{ text-align:center; position:relative; z-index:1; }
 
@@ -125,32 +178,73 @@
       margin-top:18px;
     }
 
+    /* BUTTONS: glitter + heartbeat pulse */
     button{
       border:0;
       background: linear-gradient(135deg, var(--pink), var(--pink2));
       color:white;
       padding:12px 18px;
       border-radius:16px;
-      font-weight:700;
+      font-weight:800;
       letter-spacing:.2px;
       cursor:pointer;
       box-shadow: 0 10px 22px rgba(255,90,165,.25);
       transition: transform .12s ease, filter .2s ease, opacity .2s ease;
-      min-width: 160px;
+      min-width: 170px;
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      animation: beat 1.6s ease-in-out infinite;
     }
-    button:hover{ transform: translateY(-1px); filter: brightness(1.02); }
-    button:active{ transform: translateY(1px); }
+    @keyframes beat{
+      0%,100%{ transform: translateY(0) scale(1); }
+      50%{ transform: translateY(-1px) scale(1.02); }
+    }
+    button:hover{ filter: brightness(1.05); }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    /* glitter sweep */
+    button::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.55) 0 2px, transparent 3px) 0 0/22px 22px,
+        radial-gradient(circle, rgba(255,255,255,.38) 0 1.5px, transparent 3px) 10px 10px/26px 26px;
+      opacity:.55;
+      transform: rotate(20deg) translateX(-40%);
+      animation: glitter 2.4s linear infinite;
+      z-index:-1;
+      mix-blend-mode: overlay;
+    }
+    @keyframes glitter{
+      0%{ transform: rotate(18deg) translateX(-45%); }
+      100%{ transform: rotate(18deg) translateX(45%); }
+    }
+
     button.secondary{
       background: rgba(43,27,43,.08);
       color: var(--ink);
       box-shadow:none;
       border: 1px solid rgba(43,27,43,.12);
+      animation: none;
     }
+    button.secondary::before{ display:none; }
+    body.party-dark button.secondary{
+      background: rgba(255,255,255,.10);
+      color: var(--darkInk);
+      border-color: rgba(255,255,255,.16);
+    }
+
     button:disabled{
       opacity:.45;
       cursor:not-allowed;
-      transform:none;
+      transform:none !important;
+      animation:none;
     }
+    button:disabled::before{ display:none; }
+
+    /* step buttons on page 6 (appear one-by-one) */
+    .hidden{ display:none !important; }
 
     /* Countdown */
     .countRow{
@@ -168,11 +262,16 @@
       border:1px solid rgba(255,90,165,.20);
       box-shadow: 0 12px 26px rgba(27,10,27,.06);
     }
+    body.party-dark .timeBox{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,139,198,.18);
+    }
     .num{
       font-size: clamp(26px, 5vw, 40px);
       font-weight:900;
       color: var(--ink);
     }
+    body.party-dark .num{ color: var(--darkInk); }
     .lbl{
       margin-top:2px;
       font-size: 12px;
@@ -180,6 +279,8 @@
       color: var(--muted);
       text-transform: uppercase;
     }
+    body.party-dark .lbl{ color: rgba(255,185,216,.9); }
+
     .fastCount{
       margin-top:8px;
       font-size: clamp(34px, 6vw, 54px);
@@ -192,12 +293,16 @@
     /* Celebration Scene (page 6) */
     .scene{
       position:relative;
-      height: 420px;
+      height: clamp(360px, 44vh, 450px);
       margin-top: 16px;
       border-radius: 22px;
       background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25));
       border:1px solid rgba(255,90,165,.18);
       overflow:hidden;
+    }
+    body.party-dark .scene{
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
+      border-color: rgba(255,139,198,.14);
     }
 
     /* Lights */
@@ -208,14 +313,17 @@
       opacity:0;
       transform: translateY(-10px);
       transition: opacity .5s ease, transform .5s ease;
+      z-index:3;
     }
     .lights.on{ opacity:1; transform: translateY(0); }
     .wire{
       position:absolute; left:-5%; right:-5%; top:18px;
       height:60px;
-      border-top: 3px solid rgba(43,27,43,.25);
+      border-top: 3px solid rgba(255,255,255,.22);
       border-radius: 60%;
     }
+    body:not(.party-dark) .wire{ border-top-color: rgba(43,27,43,.22); }
+
     .bulbs{
       position:absolute; left:0; right:0; top:22px;
       display:flex; justify-content:space-around;
@@ -243,14 +351,14 @@
     }
     .lights.on .bulb{
       animation-name: swing, glow;
-      animation-duration: 2.4s, 1.3s;
+      animation-duration: 2.4s, 1.0s;
       animation-iteration-count: infinite, infinite;
       animation-timing-function: ease-in-out, ease-in-out;
       animation-direction: alternate, alternate;
     }
     @keyframes glow{
-      from{ box-shadow: 0 0 10px rgba(255,90,165,.25); }
-      to{ box-shadow: 0 0 22px rgba(255,90,165,.55); }
+      from{ box-shadow: 0 0 12px rgba(255,90,165,.35); }
+      to{ box-shadow: 0 0 28px rgba(255,90,165,.85); }
     }
 
     /* Balloons */
@@ -258,6 +366,7 @@
       position:absolute; inset:0;
       pointer-events:none;
       overflow:hidden;
+      z-index:1;
     }
     .balloon{
       position:absolute;
@@ -275,9 +384,11 @@
       left:50%;
       bottom:-18px;
       width:2px; height:28px;
-      background: rgba(43,27,43,.25);
+      background: rgba(255,255,255,.30);
       transform: translateX(-50%);
     }
+    body:not(.party-dark) .balloon::after{ background: rgba(43,27,43,.25); }
+
     .balloon::before{
       content:"";
       position:absolute;
@@ -296,60 +407,35 @@
       to{ transform: translateY(-520px); }
     }
 
-    /* Cake */
+    /* REAL cake image area */
     .cakeWrap{
       position:absolute;
       left:50%;
-      bottom: 26px;
+      bottom: 14px;
       transform: translateX(-50%);
-      width: min(360px, 85vw);
-      height: 240px;
+      width: min(420px, 88vw);
+      height: 250px;
       display:none;
       align-items:flex-end;
       justify-content:center;
-      z-index:3;
+      z-index:4;
     }
     .cakeWrap.show{ display:flex; }
 
-    .cake{
-      width:100%;
-      position:relative;
-      filter: drop-shadow(0 18px 26px rgba(27,10,27,.18));
-    }
-    .tier{
-      margin:0 auto;
-      border-radius: 20px;
-      background: linear-gradient(180deg, rgba(255,139,198,.95), rgba(255,90,165,.85));
-      border: 1px solid rgba(255,255,255,.45);
-      position:relative;
-      overflow:hidden;
-    }
-    .tier::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(12px 12px at 20% 40%, rgba(255,255,255,.22), transparent 60%),
-        radial-gradient(10px 10px at 60% 60%, rgba(255,255,255,.18), transparent 60%),
-        radial-gradient(10px 10px at 85% 35%, rgba(255,255,255,.18), transparent 60%);
-      opacity:.8;
+    .cakeImg{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 28px rgba(0,0,0,.25));
+      user-select:none;
+      -webkit-user-drag:none;
     }
 
-    .tier.t1{ width: 95%; height: 68px; border-radius: 22px; }
-    .tier.t2{ width: 78%; height: 62px; border-radius: 20px; margin-bottom:10px; }
-    .tier.t3{ width: 60%; height: 56px; border-radius: 18px; margin-bottom:10px; }
-
-    .plate{
-      width:100%;
-      height: 18px;
-      margin-top: 10px;
-      border-radius: 999px;
-      background: rgba(43,27,43,.10);
-    }
-
-    /* Candle */
+    /* Candle on top of cake image */
     .candle{
       position:absolute;
-      left:50%; top:-36px;
+      left:50%;
+      bottom: 186px; /* adjust if your cake image differs */
       transform: translateX(-50%);
       width:14px; height:38px;
       background: repeating-linear-gradient(
@@ -359,15 +445,16 @@
       );
       border-radius: 8px;
       border:1px solid rgba(0,0,0,.08);
-      z-index:5;
+      z-index:6;
     }
+
     .flame{
       position:absolute;
       left:50%; top:-20px;
       width:16px; height:20px;
       transform: translateX(-50%);
       background: radial-gradient(circle at 40% 35%, rgba(255,255,255,.9), rgba(255,200,90,.9) 45%, rgba(255,90,165,.6) 80%);
-      border-radius: 60% 60% 60% 60%;
+      border-radius: 60%;
       filter: drop-shadow(0 0 18px rgba(255,200,90,.55));
       animation: flicker .14s infinite alternate;
       transform-origin: bottom center;
@@ -401,42 +488,99 @@
     }
     @keyframes pop{
       from{ transform: translateY(0) rotate(0deg); opacity:1;}
-      to{ transform: translateY(240px) rotate(360deg); opacity:0;}
+      to{ transform: translateY(260px) rotate(360deg); opacity:0;}
     }
 
-    .bigMsg{
-      margin-top: 12px;
-      font-size: clamp(18px, 2.6vw, 26px);
-      font-weight: 900;
-      color: var(--pink);
+    /* Big popup modal (used after blow + also for page pop effects) */
+    .modal{
+      position:fixed; inset:0;
       display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+      padding:20px;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(6px);
     }
-    .bigMsg.show{ display:block; }
+    .modal.show{ display:flex; }
+    .modalCard{
+      width:min(700px, 100%);
+      border-radius: 26px;
+      padding: 26px 20px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(255,90,165,.20);
+      box-shadow: 0 22px 70px rgba(0,0,0,.35);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      transform: translateY(12px) scale(.98);
+      animation: popIn .45s ease forwards;
+    }
+    @keyframes popIn{
+      to{ transform: translateY(0) scale(1); }
+    }
+    body.party-dark .modalCard{
+      background: rgba(25,10,30,.86);
+      border-color: rgba(255,139,198,.18);
+    }
+    .modalTitle{
+      font-size: clamp(26px, 4.2vw, 52px);
+      font-weight: 950;
+      margin: 0 0 8px 0;
+      color: var(--pink);
+      text-shadow: 0 10px 30px rgba(255,90,165,.18);
+    }
+    body.party-dark .modalTitle{ color: #ff8fc9; }
+    .modalSub{
+      margin: 0;
+      font-size: clamp(14px, 1.9vw, 18px);
+      color: rgba(106,75,99,.92);
+      font-weight: 700;
+    }
+    body.party-dark .modalSub{ color: rgba(255,185,216,.92); }
+
+    .closeBtn{
+      margin-top:14px;
+      min-width: 170px;
+    }
 
     .hint{
       font-size: 12px;
       color: rgba(106,75,99,.85);
       margin-top: 10px;
     }
+    body.party-dark .hint{ color: rgba(255,185,216,.85); }
 
-    /* small footer hint */
     .footer{
       margin-top: 8px;
       font-size: 12px;
       color: rgba(106,75,99,.7);
     }
+    body.party-dark .footer{ color: rgba(255,185,216,.65); }
 
-    /* Mobile: allow internal scroll if needed */
+    /* Mobile adjustments */
     @media (max-width: 520px){
       body{ overflow:auto; }
-      .app{ height:auto; min-height: 680px; }
-      .page{ position:relative; min-height: 680px; }
-      .scene{ height: 460px; }
+      .app{
+        height:auto;
+        min-height: 680px;
+      }
+      .page{
+        position:relative;
+        min-height: 680px;
+      }
+      .card{
+        max-height: none;
+      }
+      .scene{ height: 480px; }
+      .candle{ bottom: 200px; } /* a bit higher for small screens */
     }
   </style>
 </head>
+
 <body>
-  <div class="bg-hearts"></div>
+  <!-- moving emojis in background (all pages) -->
+  <div class="floating-layer" id="floatingLayer"></div>
 
   <div class="wrap">
     <div class="app" id="app">
@@ -461,10 +605,7 @@
 
             <div class="btnRow">
               <button id="btnCelebrate1" disabled>Let’s Celebrate 🎉</button>
-            </div>
-
-            <div class="hint">
-              (If opened after midnight on Jan 15, it will do a fast 10…0 countdown and then unlock.)
+              <button class="secondary" id="skipPreview">Skip (Preview) ➜</button>
             </div>
           </div>
         </div>
@@ -477,8 +618,8 @@
             <h1>Happy Birthday Kaathambari 💖</h1>
             <h3>you are more to me than words can ever explain</h3>
 
-            <p style="margin-top:14px; font-weight:800; color:var(--ink)">It’s Your <span style="color:var(--pink)">BIRTHDAY</span>!</p>
-            <p style="font-weight:800; color:var(--ink)">Ready for your surprise!</p>
+            <p style="margin-top:14px; font-weight:900; color:inherit">It’s Your <span style="color:var(--pink)">BIRTHDAY</span>!</p>
+            <p style="font-weight:900; color:inherit">Ready for your surprise!</p>
             <p>Something magical is about to unfold ✨</p>
 
             <div class="btnRow">
@@ -536,12 +677,13 @@
             <h1>Let’s celebrate 🎊</h1>
             <h3>Click the buttons to decorate</h3>
 
+            <!-- Step-by-step buttons -->
             <div class="btnRow" style="margin-top:14px;">
               <button id="lightsBtn">Turn on the lights 💡</button>
-              <button id="musicBtn">Turn on the music 🎵</button>
-              <button id="balloonsBtn">Unwind the balloons 🎈</button>
-              <button id="startBtn">Let’s Start 🎂</button>
-              <button id="blowBtn" disabled>Blow the candle 💨</button>
+              <button id="musicBtn" class="hidden">Turn on the music 🎵</button>
+              <button id="balloonsBtn" class="hidden">Unwind the balloons 🎈</button>
+              <button id="startBtn" class="hidden">Let’s Start 🎂</button>
+              <button id="blowBtn" class="hidden" disabled>Blow the candle 💨</button>
             </div>
 
             <div class="scene" id="scene">
@@ -557,17 +699,11 @@
               <!-- Balloons -->
               <div class="balloonLayer" id="balloonLayer"></div>
 
-              <!-- Cake -->
+              <!-- Real cake image (PUT cake.png in same folder as index.html) -->
               <div class="cakeWrap" id="cakeWrap">
-                <div class="cake">
-                  <div class="tier t3"></div>
-                  <div class="tier t2"></div>
-                  <div class="tier t1"></div>
-                  <div class="plate"></div>
-
-                  <div class="candle">
-                    <div class="flame" id="flame"></div>
-                  </div>
+                <img class="cakeImg" id="cakeImg" src="cake.png" alt="Birthday cake (cake.png)" />
+                <div class="candle" id="candle">
+                  <div class="flame" id="flame"></div>
                 </div>
               </div>
 
@@ -575,7 +711,6 @@
               <div class="confetti" id="confetti"></div>
             </div>
 
-            <div class="bigMsg" id="ageMsg">Happy 24th Birthday, Kaathambari 💖</div>
             <p class="hint" id="musicHint" style="display:none;">
               If your browser blocks autoplay, click “Turn on the music” again.
             </p>
@@ -596,20 +731,86 @@
     </div>
   </div>
 
+  <!-- BIG POPUP MODAL -->
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <div class="modalTitle" id="modalTitle">Happy Birthday 💖</div>
+      <p class="modalSub" id="modalSub">🎉🎂✨</p>
+      <div class="btnRow">
+        <button class="closeBtn" id="closeModal">Awwww 🥹</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // =========================
     // CONFIG
     // =========================
-    const TIMEZONE_NOTE = "Asia/Kolkata"; // for your context; browser uses device timezone
+    const PREVIEW_MODE = true; // requested: include this in code
+
     const BIRTHDAY_MONTH = 0; // Jan = 0
     const BIRTHDAY_DAY = 15;
     const DOB_YEAR = 2002;
-    const PREVIEW_MODE = true;
-
 
     // Put your YouTube link here:
     const YOUTUBE_URL = "PASTE_YOUTUBE_URL_HERE";
     // Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+    // =========================
+    // Floating emojis background (all pages)
+    // =========================
+    const floatingLayer = document.getElementById("floatingLayer");
+    const EMOJIS = ["💖","💗","💞","💕","💘","❤️","✨","🌸","🎀","🫶","😍","🥰","🎉","🎂","🎈","⭐"];
+    function rand(min,max){ return min + Math.random()*(max-min); }
+
+    function spawnEmoji(){
+      const e = document.createElement("div");
+      e.className = "float-emoji";
+      e.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+
+      const left = rand(-5, 105);
+      const size = rand(16, 34);
+      const duration = rand(9, 16);
+      const delay = rand(0, 1.2);
+
+      e.style.left = left + "vw";
+      e.style.bottom = "-40px";
+      e.style.fontSize = size + "px";
+      e.style.animationDuration = duration + "s";
+      e.style.animationDelay = delay + "s";
+
+      // gentle horizontal drift by random translateX using CSS variable + transform via keyframe? (simple: add random translateX to inline style using translate3d)
+      const drift = rand(-40, 40);
+      e.style.transform = `translate3d(${drift}px, 0, 0)`;
+
+      floatingLayer.appendChild(e);
+
+      // cleanup after animation
+      const totalLife = (duration + delay) * 1000 + 200;
+      setTimeout(() => e.remove(), totalLife);
+    }
+
+    // spawn at start + continuously
+    for(let i=0;i<18;i++) spawnEmoji();
+    setInterval(spawnEmoji, 520);
+
+    // =========================
+    // Popup helpers (used "wherever possible")
+    // =========================
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalSub = document.getElementById("modalSub");
+    const closeModalBtn = document.getElementById("closeModal");
+
+    closeModalBtn.onclick = () => modal.classList.remove("show");
+
+    function showPopup(title, sub="✨💖🎉"){
+      modalTitle.textContent = title;
+      modalSub.textContent = sub;
+      modal.classList.add("show");
+      // auto close after a moment (still has button)
+      setTimeout(() => modal.classList.remove("show"), 2600);
+    }
 
     // =========================
     // Simple page router
@@ -617,20 +818,39 @@
     const pages = ["p1","p2","p3","p4","p5","p6"].map(id => document.getElementById(id));
     function showPage(id){
       pages.forEach(p => p.classList.toggle("active", p.id === id));
-      // mobile: scroll to top of app when switching
       const app = document.getElementById("app");
       if (window.innerWidth <= 520) app.scrollIntoView({behavior:"smooth", block:"start"});
+
+      // light popup effect on page changes
+      const popTitles = {
+        p2:"Happy Birthday Kaathambari 💖",
+        p3:"Yeyeyyy 🥳",
+        p4:"Quick Question 😌",
+        p5:"Madam jiii 💅",
+        p6:"Let’s Decorate 🎊"
+      };
+      if (popTitles[id]) showPopup(popTitles[id], "✨🎀🎉");
     }
 
     // Buttons
     const btnCelebrate1 = document.getElementById("btnCelebrate1");
     const btnCelebrate2 = document.getElementById("btnCelebrate2");
+    const skipPreview = document.getElementById("skipPreview");
+
     document.getElementById("toP4").onclick = () => showPage("p4");
     document.getElementById("yesP5").onclick = () => showPage("p5");
     document.getElementById("toP6").onclick = () => showPage("p6");
 
     btnCelebrate1.onclick = () => showPage("p2");
     btnCelebrate2.onclick = () => showPage("p3");
+
+    skipPreview.onclick = () => {
+      // Jump to page 6 for testing
+      showPage("p6");
+      // also unlock celebrate
+      btnCelebrate1.disabled = false;
+      btnCelebrate1.textContent = "Let’s Celebrate 🎉";
+    };
 
     // "No" playful
     const noBtn = document.getElementById("noBtn");
@@ -687,32 +907,31 @@
       fastValue = 10;
       fastEl.textContent = fastValue;
 
-      // fast ticks
       fastTimer = setInterval(() => {
         fastValue--;
         fastEl.textContent = fastValue;
         if (fastValue <= 0){
           clearInterval(fastTimer);
           enableCelebrate();
-          // little delay then go back to normal view
+          showPopup("It’s time! 🎉", "🎂✨💖");
           setTimeout(() => {
             fastEl.classList.remove("show");
             liveBoxes.style.display = "flex";
           }, 450);
         }
-      }, 180);
+      }, 160);
     }
 
     function tickCountdown(){
+      if (PREVIEW_MODE){
+        enableCelebrate();
+        return;
+      }
+
       const now = new Date();
       const target = getNextBirthdayTarget();
       const diffMs = target - now;
-if (PREVIEW_MODE) {
-  enableCelebrate();
-  return;
-}
 
-      // If it's already on/after target midnight, do fast 10..0 then enable.
       if (diffMs <= 0){
         startFastCountdown();
         return;
@@ -727,7 +946,6 @@ if (PREVIEW_MODE) {
       mmEl.textContent = pad2(minutes);
       ssEl.textContent = pad2(seconds);
 
-      // Enable only when truly reached (handled above)
       btnCelebrate1.disabled = true;
       btnCelebrate1.textContent = "Let’s Celebrate 🔒";
     }
@@ -747,9 +965,9 @@ if (PREVIEW_MODE) {
 
     const balloonLayer = document.getElementById("balloonLayer");
     const cakeWrap = document.getElementById("cakeWrap");
+    const candle = document.getElementById("candle");
     const flame = document.getElementById("flame");
     const confetti = document.getElementById("confetti");
-    const ageMsg = document.getElementById("ageMsg");
     const yt = document.getElementById("yt");
     const musicHint = document.getElementById("musicHint");
 
@@ -757,10 +975,24 @@ if (PREVIEW_MODE) {
     let cakeShown = false;
     let candleBlown = false;
 
-    // Lights
+    // Step reveal helpers
+    function reveal(el){ el.classList.remove("hidden"); }
+    function hide(el){ el.classList.add("hidden"); }
+
+    // Lights -> also switches to dark theme + reveals Music button
     lightsBtn.onclick = () => {
       lights.classList.toggle("on");
-      lightsBtn.textContent = lights.classList.contains("on") ? "Lights are ON ✨" : "Turn on the lights 💡";
+      const on = lights.classList.contains("on");
+      document.body.classList.toggle("party-dark", on);
+
+      lightsBtn.textContent = on ? "Lights are ON ✨" : "Turn on the lights 💡";
+
+      if (on){
+        reveal(musicBtn);
+        showPopup("Lights on ✨", "💡🎀✨");
+      } else {
+        // If turned off, keep steps visible; don't hide back
+      }
     };
 
     // YouTube music (embed autoplay)
@@ -779,13 +1011,14 @@ if (PREVIEW_MODE) {
         alert("Please paste a valid YouTube link in YOUTUBE_URL inside the code.");
         return;
       }
-      // Use embed with autoplay. Note: many browsers require a user click (this is one).
       yt.src = `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
       musicBtn.textContent = "Music is ON 🎶";
       musicHint.style.display = "block";
+      reveal(balloonsBtn);
+      showPopup("Music on 🎶", "🎵💖✨");
     };
 
-    // Balloons rise and stay at the top (end position)
+    // Balloons rise and stay at the top, then reveal Start button
     function randomBetween(a,b){ return a + Math.random()*(b-a); }
 
     balloonsBtn.onclick = () => {
@@ -812,26 +1045,31 @@ if (PREVIEW_MODE) {
         b.style.animationDelay = `${randomBetween(0, 0.9)}s`;
         balloonLayer.appendChild(b);
 
-        // trigger animation
         requestAnimationFrame(() => b.classList.add("fly"));
 
-        // After rising, pin it near the top (stay there)
         b.addEventListener("animationend", () => {
           b.classList.remove("fly");
           b.style.bottom = "auto";
-          b.style.top = `${randomBetween(40, 150)}px`;
+          b.style.top = `${randomBetween(50, 160)}px`;
           b.style.transform = "translateY(0)";
         }, { once:true });
       }
+
+      reveal(startBtn);
+      showPopup("Balloons! 🎈", "🎈🎉✨");
     };
 
-    // Cake
+    // Cake show -> reveal Blow button
     startBtn.onclick = () => {
       if (cakeShown) return;
       cakeShown = true;
       cakeWrap.classList.add("show");
       startBtn.textContent = "Cake is here 🎂";
+
+      reveal(blowBtn);
       blowBtn.disabled = false;
+
+      showPopup("Cake time 🎂", "🍰✨💖");
     };
 
     // Confetti burst
@@ -839,33 +1077,37 @@ if (PREVIEW_MODE) {
       confetti.innerHTML = "";
       confetti.classList.add("show");
       const colors = ["#ff5aa5","#ff8bc6","#ffd36b","#7ddcff","#a4ffbf","#ffffff"];
-      for (let i=0; i<36; i++){
+      for (let i=0; i<46; i++){
         const piece = document.createElement("i");
         piece.style.left = `${Math.random()*100}%`;
-        piece.style.top = `${Math.random()*10}%`;
+        piece.style.top = `${Math.random()*12}%`;
         piece.style.background = colors[i % colors.length];
-        piece.style.animationDelay = `${Math.random()*0.15}s`;
-        piece.style.transform = `translateY(0) rotate(${Math.random()*180}deg)`;
+        piece.style.animationDelay = `${Math.random()*0.18}s`;
         confetti.appendChild(piece);
       }
       setTimeout(() => confetti.classList.remove("show"), 1500);
     }
 
-    // Age message (based on next birthday date shown by countdown)
     function computeAgeOnNextBirthday(){
-      const target = getNextBirthdayTarget(); // next Jan 15 at 00:00
+      const target = getNextBirthdayTarget();
       return target.getFullYear() - DOB_YEAR;
     }
 
+    // Blow -> hide cake + BIG popup
     blowBtn.onclick = () => {
       if (candleBlown) return;
       candleBlown = true;
+
       flame.classList.add("off");
       burstConfetti();
 
+      // Hide cake after a tiny delay for effect
+      setTimeout(() => {
+        cakeWrap.classList.remove("show");
+      }, 650);
+
       const age = computeAgeOnNextBirthday();
-      ageMsg.textContent = `Happy ${age}th Birthday, Kaathambari 💖`;
-      ageMsg.classList.add("show");
+      showPopup(`Happy ${age}th Birthday, Kaathambari 💖`, "🎉🎂✨💖");
 
       blowBtn.textContent = "Candle blown ✨";
       blowBtn.disabled = true;
