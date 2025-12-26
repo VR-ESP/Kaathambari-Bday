@@ -139,6 +139,27 @@
       position:relative;
       overflow:hidden;   /* ✅ no internal scrollbars */
     }
+
+    /* 🔽 ADD THIS BLOCK RIGHT AFTER THE ABOVE */
+#p1 .card,
+#p2 .card,
+#p3 .card,
+#p4 .card,
+#p5 .card{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;   /* vertical center */
+  align-items:center;       /* horizontal center */
+  text-align:center;
+}
+
+/* Keep page 6 layout safe */
+#p6 .card{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+}
     body.party-dark .card{
       background: var(--darkCard);
       border-color: rgba(255,139,198,.18);
