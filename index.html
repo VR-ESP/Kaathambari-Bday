@@ -329,7 +329,7 @@
     .scene{
       position:relative;
       flex: 1;
-      min-height: 320px;
+      min-height: 380px;
       border-radius: 22px;
       background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25));
       border:1px solid rgba(255,90,165,.18);
@@ -728,16 +728,11 @@
         <div class="card card6">
           <div class="center" style="margin-top:2px;">
             <h1>Let’s celebrate 🎊</h1>
-            <h3>Click the button to decorate</h3>
 
             <!-- SINGLE ACTION BUTTON -->
             <div class="btnRow">
               <button id="actionBtn">Turn on the lights 💡</button>
             </div>
-
-            <p class="hint" id="musicHint" style="display:none;">
-              If your browser blocks autoplay, click the button again.
-            </p>
           </div>
 
           <div class="scene" id="scene">
@@ -1131,7 +1126,6 @@
           return;
         }
         yt.src = `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
-        musicHint.style.display = "block";
         step = 2;
         setActionLabel();
         return;
