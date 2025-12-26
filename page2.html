@@ -10,7 +10,7 @@
 
   body {
     margin: 0;
-    height: 100dvh; /* fixes Chrome cut issue */
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,6 +18,7 @@
     overflow: hidden;
     background: linear-gradient(135deg, #ff9a9e, #fad0c4);
     position: relative;
+    padding: 18px; /* helps on small screens */
   }
 
   /* Floating hearts */
@@ -27,25 +28,24 @@
     pointer-events: none;
     overflow: hidden;
   }
-
   .heart {
     position: absolute;
     animation: floatUp linear infinite;
     opacity: 0.6;
   }
-
   @keyframes floatUp {
     0% { transform: translateY(110vh); opacity: 0; }
     10% { opacity: 1; }
     100% { transform: translateY(-20vh); opacity: 0; }
   }
 
+  /* Bigger card */
   .card {
-    width: min(90vw, 600px);
-    background: rgba(255,255,255,0.9);
-    padding: 28px 20px 36px;
-    border-radius: 22px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    width: min(94vw, 760px);              /* ⬅️ bigger max width */
+    background: rgba(255,255,255,0.92);
+    padding: 34px 26px 34px;             /* ⬅️ more padding */
+    border-radius: 26px;
+    box-shadow: 0 26px 60px rgba(0,0,0,0.22);
     text-align: center;
     position: relative;
     z-index: 2;
@@ -53,64 +53,69 @@
 
   h1 {
     margin: 0 0 18px;
-    font-size: clamp(24px, 4vw, 36px);
+    font-size: clamp(26px, 4vw, 44px);   /* ⬅️ slightly bigger heading */
     color: #4b0033;
   }
 
   .playArea {
     position: relative;
-    height: 220px;
-    border-radius: 18px;
-    background: rgba(255,255,255,0.6);
-    border: 2px dashed rgba(255,0,128,0.3);
+    height: 260px;                       /* ⬅️ slightly bigger play area */
+    border-radius: 20px;
+    background: rgba(255,255,255,0.62);
+    border: 2px dashed rgba(255,0,128,0.28);
     overflow: hidden;
   }
 
   button {
     position: absolute;
-    padding: 14px 22px;
+    padding: 14px 26px;
     border: none;
     border-radius: 999px;
     background: linear-gradient(135deg, #ff3b9d, #ff77c8);
     color: white;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
     box-shadow: 0 14px 30px rgba(255,59,157,0.35);
     transition: transform 0.1s ease;
   }
 
-  button:active {
-    transform: scale(0.95);
-  }
+  button:active { transform: scale(0.95); }
 
+  /* Reveal section is INSIDE card layout (no absolute positioning) */
   .reveal {
     display: none;
-    margin-top: 22px;
+    margin-top: 24px;
     animation: fadeIn 0.4s ease forwards;
   }
-
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* Next button should not be absolute — keep it inside */
+  .nextWrap{
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+  }
+
   .nextBtn {
-    margin-top: 14px;
-    padding: 14px 26px;
+    position: static;                    /* ✅ important: keeps it inside card */
+    padding: 14px 30px;
     font-size: 16px;
     background: linear-gradient(135deg, #7c3aed, #ff3b9d);
     box-shadow: 0 16px 36px rgba(124,58,237,0.35);
   }
 
-  @media (max-width: 500px) {
-    .playArea { height: 260px; }
+  @media (max-width: 520px) {
+    .card { padding: 26px 18px 28px; }
+    .playArea { height: 280px; }
   }
 </style>
 </head>
 
 <body>
 
-<!-- Hearts -->
 <div class="hearts" id="hearts"></div>
 
 <div class="card">
@@ -121,79 +126,88 @@
   </div>
 
   <div class="reveal" id="reveal">
-    <h1>I know you really love me 😏💖</h1>
-    <button class="nextBtn" onclick="goNext()">Next 💕</button>
+    <h1 style="margin-top: 6px;">I know you really love me 😏💖</h1>
+
+    <div class="nextWrap">
+      <button class="nextBtn" type="button" onclick="goNext()">Next 💕</button>
+    </div>
   </div>
 </div>
 
 <script>
-/* Floating hearts */
-const hearts = document.getElementById("hearts");
-const emojis = ["💖","💗","💕","💘","✨"];
+  // Floating hearts
+  const hearts = document.getElementById("hearts");
+  const emojis = ["💖","💗","💕","💘","✨","🌸"];
 
-setInterval(() => {
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.fontSize = 14 + Math.random() * 18 + "px";
-  h.style.animationDuration = 6 + Math.random() * 6 + "s";
-  hearts.appendChild(h);
-  setTimeout(() => h.remove(), 12000);
-}, 350);
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 14 + Math.random() * 18 + "px";
+    h.style.animationDuration = 6 + Math.random() * 6 + "s";
+    hearts.appendChild(h);
+    setTimeout(() => h.remove(), 12000);
+  }, 350);
 
-/* Button escape logic */
-const noBtn = document.getElementById("noBtn");
-const playArea = document.getElementById("playArea");
-const reveal = document.getElementById("reveal");
-const question = document.getElementById("question");
+  // Button escape logic
+  const noBtn = document.getElementById("noBtn");
+  const playArea = document.getElementById("playArea");
+  const reveal = document.getElementById("reveal");
+  const question = document.getElementById("question");
 
-let escapes = 3;
-let done = false;
+  let escapes = 3;
+  let done = false;
 
-// initial position
-centerButton();
+  centerButton();
 
-function centerButton() {
-  noBtn.style.left = "50%";
-  noBtn.style.top = "50%";
-  noBtn.style.transform = "translate(-50%, -50%)";
-}
-
-function moveButton() {
-  if (done) return;
-
-  escapes--;
-
-  if (escapes < 0) {
-    finish();
-    return;
+  function centerButton() {
+    noBtn.style.left = "50%";
+    noBtn.style.top = "55%";
+    noBtn.style.transform = "translate(-50%, -50%)";
   }
 
-  const area = playArea.getBoundingClientRect();
-  const btn = noBtn.getBoundingClientRect();
+  function moveButton() {
+    if (done) return;
 
-  const x = Math.random() * (area.width - btn.width - 20) + 10;
-  const y = Math.random() * (area.height - btn.height - 20) + 10;
+    escapes--;
 
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-  noBtn.style.transform = "translate(0,0)";
-}
+    // After 3 runaways, reveal next
+    if (escapes < 0) {
+      finish();
+      return;
+    }
 
-function finish() {
-  done = true;
-  noBtn.style.display = "none";
-  question.textContent = "Okay… confession time 😌";
-  reveal.style.display = "block";
-}
+    const area = playArea.getBoundingClientRect();
+    const btn = noBtn.getBoundingClientRect();
 
-noBtn.addEventListener("mouseenter", moveButton);
-noBtn.addEventListener("click", moveButton);
+    const pad = 12;
+    const x = Math.random() * (area.width - btn.width - pad*2) + pad;
+    const y = Math.random() * (area.height - btn.height - pad*2) + pad;
 
-function goNext() {
-  window.location.href = "page3.html";
-}
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+    noBtn.style.transform = "translate(0,0)";
+  }
+
+  function finish() {
+    done = true;
+    noBtn.style.display = "none";
+    question.textContent = "Okay… confession time 😌";
+    reveal.style.display = "block";
+  }
+
+  noBtn.addEventListener("mouseenter", moveButton);
+  noBtn.addEventListener("click", moveButton);
+
+  // Keep button safe on resize
+  window.addEventListener("resize", () => {
+    if (!done) centerButton();
+  });
+
+  function goNext() {
+    window.location.href = "page3.html";
+  }
 </script>
 
 </body>
