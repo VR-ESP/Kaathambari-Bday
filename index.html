@@ -734,7 +734,8 @@
       <div class="modalTitle" id="modalTitle">Cake time 🎂</div>
       <p class="modalSub" id="modalSub">✨💖🎉</p>
       <div class="btnRow">
-        <button class="closeBtn" id="closeModal">Close</button>
+      <button class="closeBtn" id="closeModal">Close</button>
+      <button class="closeBtn" id="goPage2" style="display:none;">Continue ➜</button>
       </div>
     </div>
   </div>
@@ -789,9 +790,17 @@
     const modalSub = document.getElementById("modalSub");
     const closeModalBtn = document.getElementById("closeModal");
 
+    const goPage2Btn = document.getElementById("goPage2");
+
+goPage2Btn.onclick = () => {
+  window.location.href = "page2.html";
+};
+
+
     closeModalBtn.onclick = () => modal.classList.remove("show");
 
     function showCakePopup(){
+      goPage2Btn.style.display = "none";
       modal.classList.remove("static");
       closeModalBtn.style.display = "";
       modalTitle.textContent = "Cake time 🎂";
@@ -801,14 +810,19 @@
       setTimeout(() => modal.classList.remove("show"), 1400);
     }
 
-    function showFinalPopup(title){
-      modal.classList.add("static");
-      modalTitle.textContent = title;
-      modalSub.textContent = "🎉🎂✨💖";
-      // hide close button and DO NOT auto-hide (static)
-      closeModalBtn.style.display = "none";
-      modal.classList.add("show");
-    }
+   function showFinalPopup(title){
+  modal.classList.add("static");
+  modalTitle.textContent = title;
+  modalSub.textContent = "🎉🎂✨💖";
+
+  // show Continue button only here
+  goPage2Btn.style.display = "inline-block";
+
+  // keep popup static: hide Close button
+  closeModalBtn.style.display = "none";
+
+  modal.classList.add("show");
+}
 
     // =========================
     // Router
