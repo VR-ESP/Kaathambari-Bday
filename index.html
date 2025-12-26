@@ -167,7 +167,19 @@
 /* reduce vertical space used by page padding on all pages (helps 100% zoom) */
 .page{
   padding: 20px 16px;   /* was bigger */
+   /* ✅ CENTER CONTENT */
+  display:flex;
+  align-items:center;      /* vertical center */
+  justify-content:center;  /* horizontal center */
+
+  box-sizing:border-box;
 }
+
+    .card{
+  width: min(900px, 95%);
+  max-width: 100%;
+}
+
 
 /* scene should take remaining height and shrink safely */
 .card6 .scene{
