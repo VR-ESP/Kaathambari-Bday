@@ -92,7 +92,7 @@
     background: linear-gradient(135deg, #ff3b9d, #ff77c8);
   }
 
-  /* Text inside the box (playArea) */
+  /* "Just Kidding" overlay inside box */
   .boxMsg {
     position: absolute;
     inset: 0;
@@ -107,11 +107,12 @@
     text-align: center;
     background: rgba(255,255,255,0.35);
     backdrop-filter: blur(6px);
+    animation: fadeIn 0.35s ease forwards;
   }
 
   .reveal {
-    margin-top: 24px;
-    display: block; /* keep "I know you..." always visible as you said */
+    margin-top: 22px;
+    display: none; /* ✅ show ONLY after Just Kidding */
     animation: fadeIn 0.4s ease forwards;
   }
 
@@ -157,11 +158,10 @@
     <button class="btn btnYes" id="yesBtn" type="button">Yes</button>
     <button class="btn btnNo" id="noBtn" type="button">No</button>
 
-    <!-- After 5 combined teleports, show this INSIDE the box -->
     <div class="boxMsg" id="boxMsg">Just Kidding 😜</div>
   </div>
 
-  <!-- Keep this already there -->
+  <!-- ✅ this will show ONLY after "Just Kidding" -->
   <div class="reveal" id="reveal">
     <h1 style="margin-top: 6px;">I know you really love me 😏💖</h1>
     <div class="nextWrap">
@@ -186,11 +186,12 @@
     setTimeout(() => h.remove(), 12000);
   }, 350);
 
-  // Teleport logic (combined 5 times for BOTH buttons)
+  // Teleport logic (combined 5 times)
   const playArea = document.getElementById("playArea");
   const yesBtn = document.getElementById("yesBtn");
   const noBtn  = document.getElementById("noBtn");
   const boxMsg = document.getElementById("boxMsg");
+  const reveal = document.getElementById("reveal");
 
   let teleportsLeft = 5;
   let done = false;
@@ -224,13 +225,11 @@
 
     teleportsLeft--;
 
-    // move button
     const pos = randomPosFor(btn);
     btn.style.left = pos.x + "px";
     btn.style.top  = pos.y + "px";
     btn.style.transform = "translate(0,0)";
 
-    // small pop animation
     btn.animate(
       [{ transform: "translate(0,0) scale(1)" },
        { transform: "translate(0,0) scale(1.07)" },
@@ -238,22 +237,28 @@
       { duration: 220, easing: "ease-out" }
     );
 
-    // after 5 combined teleports, show "Just Kidding" inside the box
     if (teleportsLeft <= 0) {
       done = true;
+
+      // hide buttons
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
+
+      // show "Just Kidding" inside the box
       boxMsg.style.display = "flex";
+
+      // after a short delay, show "I know you really love me"
+      setTimeout(() => {
+        reveal.style.display = "block";
+      }, 900);
     }
   }
 
-  // Hover + click (mobile fallback)
   ["mouseenter","click"].forEach(evt => {
     yesBtn.addEventListener(evt, () => teleport(yesBtn));
     noBtn.addEventListener(evt, () => teleport(noBtn));
   });
 
-  // keep safe on resize if not done
   window.addEventListener("resize", () => {
     if (!done) {
       placePercent(yesBtn, 35, 58);
