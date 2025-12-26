@@ -1,380 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Page 2 — Love Check 💖</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do You Love Me 💖</title>
 
-  <style>
-    :root{
-      --bg1:#ffb3d9;
-      --bg2:#ffd6f0;
-      --card:#ffffffd9;
-      --text:#3b0a2a;
-      --accent:#ff3b9d;
-      --accent2:#ff6fc2;
-      --shadow: 0 18px 45px rgba(0,0,0,.18);
-    }
+<style>
+  * { box-sizing: border-box; }
 
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--text);
-      overflow:hidden;
-      background: radial-gradient(circle at 20% 20%, var(--bg2), transparent 55%),
-                  radial-gradient(circle at 80% 30%, #ffe2f4, transparent 55%),
-                  linear-gradient(135deg, var(--bg1), var(--bg2));
-      position:relative;
-    }
+  body {
+    margin: 0;
+    height: 100dvh; /* fixes Chrome cut issue */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Poppins", system-ui, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    position: relative;
+  }
 
-    /* Floating hearts background */
-    .hearts{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      overflow:hidden;
-      opacity:.55;
-    }
-    .heart{
-      position:absolute;
-      font-size:18px;
-      animation: floatUp linear infinite;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.08));
-      will-change: transform;
-    }
-    @keyframes floatUp{
-      0%   { transform: translateY(110vh) rotate(0deg); opacity:0; }
-      10%  { opacity:1; }
-      100% { transform: translateY(-20vh) rotate(360deg); opacity:0; }
-    }
+  /* Floating hearts */
+  .hearts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
 
-    .wrap{
-      width:min(720px, 92vw);
-      padding:28px 18px;
-      position:relative;
-      z-index:2;
-    }
+  .heart {
+    position: absolute;
+    animation: floatUp linear infinite;
+    opacity: 0.6;
+  }
 
-    .card{
-      background:var(--card);
-      border: 1px solid rgba(255,255,255,.7);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      padding:28px 22px;
-      text-align:center;
-      backdrop-filter: blur(10px);
-    }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-20vh); opacity: 0; }
+  }
 
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      background: rgba(255, 59, 157, .12);
-      border:1px solid rgba(255, 59, 157, .25);
-      color: #7a144b;
-      font-weight:600;
-      font-size:14px;
-      margin-bottom:14px;
-    }
+  .card {
+    width: min(90vw, 600px);
+    background: rgba(255,255,255,0.9);
+    padding: 28px 20px 36px;
+    border-radius: 22px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
 
-    h1{
-      margin:8px 0 6px;
-      font-size: clamp(26px, 4vw, 40px);
-      line-height:1.15;
-      letter-spacing:.2px;
-    }
-    p{
-      margin: 10px 0 0;
-      font-size: clamp(15px, 2.2vw, 18px);
-      opacity:.9;
-    }
+  h1 {
+    margin: 0 0 18px;
+    font-size: clamp(24px, 4vw, 36px);
+    color: #4b0033;
+  }
 
-    .playArea{
-      margin:22px auto 0;
-      width:min(620px, 90%);
-      height: 240px;
-      border-radius:22px;
-      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.55));
-      border: 1px dashed rgba(255, 59, 157, .35);
-      position:relative;
-      overflow:hidden;
-    }
+  .playArea {
+    position: relative;
+    height: 220px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.6);
+    border: 2px dashed rgba(255,0,128,0.3);
+    overflow: hidden;
+  }
 
-    .hint{
-      position:absolute;
-      left:14px;
-      top:14px;
-      font-size:13px;
-      padding:8px 12px;
-      border-radius:999px;
-      background: rgba(255,255,255,.65);
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 8px 18px rgba(0,0,0,.08);
-    }
+  button {
+    position: absolute;
+    padding: 14px 22px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff3b9d, #ff77c8);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 14px 30px rgba(255,59,157,0.35);
+    transition: transform 0.1s ease;
+  }
 
-    .btn{
-      position:absolute;
-      min-width: 140px;
-      padding:12px 16px;
-      border:none;
-      border-radius:999px;
-      font-weight:700;
-      cursor:pointer;
-      box-shadow: 0 14px 25px rgba(255,59,157,.25);
-      transition: transform .12s ease, box-shadow .12s ease;
-      user-select:none;
-    }
-    .btn:active{ transform: scale(.98); }
+  button:active {
+    transform: scale(0.95);
+  }
 
-    .btn.no{
-      background: linear-gradient(135deg, #ff4aa8, #ff7ac8);
-      color:white;
-    }
-    .btn.no:hover{
-      box-shadow: 0 18px 35px rgba(255,59,157,.35);
-    }
+  .reveal {
+    display: none;
+    margin-top: 22px;
+    animation: fadeIn 0.4s ease forwards;
+  }
 
-    .statusRow{
-      margin-top:16px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .pill{
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:700;
-      background: rgba(255,255,255,.7);
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-      font-size:14px;
-    }
-    .pill b{ color: var(--accent); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-    .reveal{
-      margin-top:18px;
-      display:none;
-      animation: pop .35s ease forwards;
-    }
-    @keyframes pop{
-      from{ transform: translateY(8px); opacity:0; }
-      to{ transform: translateY(0); opacity:1; }
-    }
+  .nextBtn {
+    margin-top: 14px;
+    padding: 14px 26px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #7c3aed, #ff3b9d);
+    box-shadow: 0 16px 36px rgba(124,58,237,0.35);
+  }
 
-    .nextBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding:14px 20px;
-      border:none;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:900;
-      color:white;
-      background: linear-gradient(135deg, #7c3aed, #ff3b9d);
-      box-shadow: 0 18px 40px rgba(124,58,237,.25);
-      transition: transform .12s ease, box-shadow .12s ease;
-    }
-    .nextBtn:hover{
-      box-shadow: 0 22px 52px rgba(124,58,237,.28);
-      transform: translateY(-1px);
-    }
-
-    .small{
-      margin-top:10px;
-      font-size:13px;
-      opacity:.85;
-    }
-
-    /* Responsive play area height */
-    @media (max-width:520px){
-      .playArea{ height: 270px; }
-      .btn{ min-width: 120px; }
-    }
-  </style>
+  @media (max-width: 500px) {
+    .playArea { height: 260px; }
+  }
+</style>
 </head>
 
 <body>
 
-  <!-- Floating hearts -->
-  <div class="hearts" id="hearts"></div>
+<!-- Hearts -->
+<div class="hearts" id="hearts"></div>
 
-  <div class="wrap">
-    <div class="card">
-      <div class="badge">💞 Love Detector • Level 2</div>
-      <h1 id="question">Do you really love me? 🥺</h1>
-      <p>Be honest… try to click <b>NO</b> 😌</p>
+<div class="card">
+  <h1 id="question">Do you really love me? 🥺</h1>
 
-      <div class="playArea" id="playArea">
-        <div class="hint">Tip: Move your mouse over the buttons 😈</div>
-
-        <button class="btn no" id="noBtn1" type="button">No</button>
-        <button class="btn no" id="noBtn2" type="button">No</button>
-      </div>
-
-      <div class="statusRow">
-        <div class="pill">Run-aways left: <b id="triesLeft">3</b></div>
-        <div class="pill">Mood: <span id="mood">😇 innocent</span></div>
-      </div>
-
-      <div class="reveal" id="reveal">
-        <h1 style="margin-top:10px;">I know you really love me 😏💖</h1>
-        <p>Okay okay… enough teasing. Let’s go to the next part!</p>
-        <div style="margin-top:14px;">
-          <button class="nextBtn" id="nextBtn" type="button">
-            Next Part 🚀
-          </button>
-        </div>
-        <div class="small">Redirecting to <b>page3.html</b></div>
-      </div>
-    </div>
+  <div class="playArea" id="playArea">
+    <button id="noBtn">No</button>
   </div>
 
-  <script>
-    // -----------------------------
-    // Floating hearts generator
-    // -----------------------------
-    const hearts = document.getElementById("hearts");
-    const heartEmojis = ["💖","💗","💓","💘","💕","💝","✨","🌸"];
+  <div class="reveal" id="reveal">
+    <h1>I know you really love me 😏💖</h1>
+    <button class="nextBtn" onclick="goNext()">Next 💕</button>
+  </div>
+</div>
 
-    function spawnHeart(){
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
-      h.style.left = Math.random() * 100 + "vw";
-      h.style.animationDuration = (6 + Math.random() * 8) + "s";
-      h.style.fontSize = (14 + Math.random() * 18) + "px";
-      h.style.opacity = (0.35 + Math.random() * 0.6);
-      hearts.appendChild(h);
+<script>
+/* Floating hearts */
+const hearts = document.getElementById("hearts");
+const emojis = ["💖","💗","💕","💘","✨"];
 
-      // remove after animation
-      setTimeout(() => h.remove(), 15000);
-    }
+setInterval(() => {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.fontSize = 14 + Math.random() * 18 + "px";
+  h.style.animationDuration = 6 + Math.random() * 6 + "s";
+  hearts.appendChild(h);
+  setTimeout(() => h.remove(), 12000);
+}, 350);
 
-    // spawn hearts continuously
-    setInterval(spawnHeart, 350);
-    // initial hearts burst
-    for(let i=0;i<15;i++) setTimeout(spawnHeart, i*120);
+/* Button escape logic */
+const noBtn = document.getElementById("noBtn");
+const playArea = document.getElementById("playArea");
+const reveal = document.getElementById("reveal");
+const question = document.getElementById("question");
 
-    // -----------------------------
-    // Runaway button logic (3 times)
-    // -----------------------------
-    const playArea = document.getElementById("playArea");
-    const noBtn1 = document.getElementById("noBtn1");
-    const noBtn2 = document.getElementById("noBtn2");
-    const triesLeftEl = document.getElementById("triesLeft");
-    const moodEl = document.getElementById("mood");
-    const reveal = document.getElementById("reveal");
-    const question = document.getElementById("question");
+let escapes = 3;
+let done = false;
 
-    let triesLeft = 3;
-    let finished = false;
+// initial position
+centerButton();
 
-    // initial placement
-    placeButton(noBtn1, 18, 55);
-    placeButton(noBtn2, 58, 55);
+function centerButton() {
+  noBtn.style.left = "50%";
+  noBtn.style.top = "50%";
+  noBtn.style.transform = "translate(-50%, -50%)";
+}
 
-    function placeButton(btn, xPercent, yPercent){
-      btn.style.left = xPercent + "%";
-      btn.style.top = yPercent + "%";
-      btn.style.transform = "translate(-50%, -50%)";
-    }
+function moveButton() {
+  if (done) return;
 
-    function randomPositionFor(btn){
-      const areaRect = playArea.getBoundingClientRect();
+  escapes--;
 
-      // button size
-      const btnRect = btn.getBoundingClientRect();
+  if (escapes < 0) {
+    finish();
+    return;
+  }
 
-      // padding inside box so it doesn't go out
-      const pad = 14;
+  const area = playArea.getBoundingClientRect();
+  const btn = noBtn.getBoundingClientRect();
 
-      const maxX = areaRect.width - btnRect.width - pad;
-      const maxY = areaRect.height - btnRect.height - pad;
+  const x = Math.random() * (area.width - btn.width - 20) + 10;
+  const y = Math.random() * (area.height - btn.height - 20) + 10;
 
-      const x = pad + Math.random() * Math.max(10, maxX);
-      const y = (pad + 40) + Math.random() * Math.max(10, (maxY - 40)); // keep away from hint top
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+  noBtn.style.transform = "translate(0,0)";
+}
 
-      return { x, y };
-    }
+function finish() {
+  done = true;
+  noBtn.style.display = "none";
+  question.textContent = "Okay… confession time 😌";
+  reveal.style.display = "block";
+}
 
-    function moveAway(btn){
-      if (finished) return;
+noBtn.addEventListener("mouseenter", moveButton);
+noBtn.addEventListener("click", moveButton);
 
-      if (triesLeft <= 0){
-        endGame();
-        return;
-      }
+function goNext() {
+  window.location.href = "page3.html";
+}
+</script>
 
-      // decrement tries ONCE per hover event
-      triesLeft -= 1;
-      triesLeftEl.textContent = triesLeft;
-
-      // update mood
-      if (triesLeft === 2) moodEl.textContent = "😏 suspicious";
-      if (triesLeft === 1) moodEl.textContent = "😈 teasing";
-      if (triesLeft === 0) moodEl.textContent = "💘 caught!";
-
-      // move button to a new random location inside playArea
-      const pos = randomPositionFor(btn);
-      btn.style.left = pos.x + "px";
-      btn.style.top = pos.y + "px";
-      btn.style.transform = "translate(0,0)";
-
-      // small jump effect
-      btn.animate(
-        [{ transform: "translate(0,0) scale(1)" }, { transform: "translate(0,0) scale(1.07)" }, { transform: "translate(0,0) scale(1)" }],
-        { duration: 220, easing: "ease-out" }
-      );
-
-      // after 3rd time, finish
-      if (triesLeft === 0){
-        setTimeout(endGame, 350);
-      }
-    }
-
-    function endGame(){
-      finished = true;
-
-      // hide buttons smoothly
-      noBtn1.style.display = "none";
-      noBtn2.style.display = "none";
-
-      question.textContent = "Okay… confession time 😌";
-      reveal.style.display = "block";
-    }
-
-    // Hover events (desktop)
-    noBtn1.addEventListener("mouseenter", () => moveAway(noBtn1));
-    noBtn2.addEventListener("mouseenter", () => moveAway(noBtn2));
-
-    // Also handle click (in case user taps on mobile)
-    noBtn1.addEventListener("click", () => moveAway(noBtn1));
-    noBtn2.addEventListener("click", () => moveAway(noBtn2));
-
-    // Next part button
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      window.location.href = "page3.html";
-    });
-
-    // Optional: reposition on resize so buttons stay in area
-    window.addEventListener("resize", () => {
-      if (!finished){
-        // put them back to safe spots
-        placeButton(noBtn1, 18, 55);
-        placeButton(noBtn2, 58, 55);
-      }
-    });
-  </script>
 </body>
 </html>
