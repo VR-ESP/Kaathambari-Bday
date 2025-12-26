@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Page 2 – Continued Surprise</title>
+
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(900px 600px at 20% 20%, #ffe2ef, transparent 60%),
+        radial-gradient(900px 600px at 80% 80%, #ffd3e8, transparent 55%),
+        linear-gradient(180deg, #fff1f7, #ffffff);
+      color:#2b1b2b;
+    }
+
+    .card{
+      width:min(720px, 92%);
+      background: rgba(255,255,255,.75);
+      border-radius:24px;
+      padding:32px 22px;
+      box-shadow: 0 20px 60px rgba(27,10,27,.15);
+      text-align:center;
+    }
+
+    h1{
+      font-size: clamp(28px, 4vw, 44px);
+      margin:0 0 12px 0;
+      color:#ff5aa5;
+    }
+
+    p{
+      font-size: clamp(14px, 1.8vw, 17px);
+      color:#6a4b63;
+      margin:10px 0;
+    }
+
+    .btnRow{
+      margin-top:22px;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    a.button{
+      text-decoration:none;
+      background: linear-gradient(135deg, #ff5aa5, #ff8bc6);
+      color:white;
+      padding:12px 18px;
+      border-radius:16px;
+      font-weight:800;
+      box-shadow: 0 10px 22px rgba(255,90,165,.25);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>🎉 You made it to Page 2 🎉</h1>
+
+    <p>
+      This page confirms that the <strong>Continue ➜</strong> button
+      redirect from <code>index.html</code> is working perfectly 💖
+    </p>
+
+    <p>
+      You can now build anything here:
+      <br/>💌 a letter, 📸 memories gallery, 🎥 video, or 💖 love notes.
+    </p>
+
+    <div class="btnRow">
+      <a class="button" href="index.html">⬅ Back to Birthday Page</a>
+    </div>
+  </div>
+</body>
+</html>
