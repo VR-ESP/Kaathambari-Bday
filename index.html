@@ -58,7 +58,6 @@
       position:absolute;
       font-size: clamp(16px, 2.4vw, 28px);
       opacity:.35;
-      filter: blur(.1px);
       animation: floatUp linear forwards;
       will-change: transform, opacity;
     }
@@ -77,7 +76,7 @@
       place-items:center;
       padding:18px;
       position:relative;
-      z-index:1; /* above emojis */
+      z-index:1;
     }
 
     .app{
@@ -97,7 +96,6 @@
       border-color: rgba(255,90,165,.18);
     }
 
-    /* top ribbon */
     .ribbon{
       position:absolute; left:-60px; top:-60px;
       width:200px; height:200px;
@@ -109,10 +107,7 @@
       opacity:.9;
       z-index:0;
     }
-    body.party-dark .ribbon{
-      opacity:.35;
-      filter: saturate(1.1);
-    }
+    body.party-dark .ribbon{ opacity:.35; }
 
     .page{
       position:absolute; inset:0;
@@ -140,7 +135,7 @@
       box-shadow: 0 14px 40px rgba(27,10,27,.10);
       padding:28px 20px;
       position:relative;
-      overflow:auto; /* fixes cut top/bottom on smaller screens */
+      overflow:auto;
       -webkit-overflow-scrolling: touch;
     }
     body.party-dark .card{
@@ -190,7 +185,7 @@
       cursor:pointer;
       box-shadow: 0 10px 22px rgba(255,90,165,.25);
       transition: transform .12s ease, filter .2s ease, opacity .2s ease;
-      min-width: 170px;
+      min-width: 200px;
       position:relative;
       overflow:hidden;
       isolation:isolate;
@@ -203,7 +198,6 @@
     button:hover{ filter: brightness(1.05); }
     button:active{ transform: translateY(1px) scale(.99); }
 
-    /* glitter sweep */
     button::before{
       content:"";
       position:absolute; inset:-40%;
@@ -221,20 +215,6 @@
       100%{ transform: rotate(18deg) translateX(45%); }
     }
 
-    button.secondary{
-      background: rgba(43,27,43,.08);
-      color: var(--ink);
-      box-shadow:none;
-      border: 1px solid rgba(43,27,43,.12);
-      animation: none;
-    }
-    button.secondary::before{ display:none; }
-    body.party-dark button.secondary{
-      background: rgba(255,255,255,.10);
-      color: var(--darkInk);
-      border-color: rgba(255,255,255,.16);
-    }
-
     button:disabled{
       opacity:.45;
       cursor:not-allowed;
@@ -242,9 +222,6 @@
       animation:none;
     }
     button:disabled::before{ display:none; }
-
-    /* step buttons on page 6 (appear one-by-one) */
-    .hidden{ display:none !important; }
 
     /* Countdown */
     .countRow{
@@ -293,7 +270,7 @@
     /* Celebration Scene (page 6) */
     .scene{
       position:relative;
-      height: clamp(360px, 44vh, 450px);
+      height: clamp(360px, 44vh, 470px);
       margin-top: 16px;
       border-radius: 22px;
       background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25));
@@ -304,6 +281,34 @@
       background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
       border-color: rgba(255,139,198,.14);
     }
+
+    /* Side background image blend (only page 6, after lights ON) */
+    .sidePics{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:0;
+      transition: opacity .6s ease;
+    }
+    .sidePics.on{ opacity:1; }
+    .side{
+      position:absolute;
+      top:0; bottom:0;
+      width:34%;
+      background-size: cover;
+      background-position:center;
+      filter: blur(2px) saturate(1.05);
+      opacity:.28;
+      mix-blend-mode: screen;
+      transform: scale(1.05);
+    }
+    body:not(.party-dark) .side{
+      mix-blend-mode: multiply;
+      opacity:.18;
+    }
+    .side.left{ left:0; mask-image: linear-gradient(90deg, rgba(0,0,0,1), rgba(0,0,0,.2), transparent); }
+    .side.right{ right:0; mask-image: linear-gradient(270deg, rgba(0,0,0,1), rgba(0,0,0,.2), transparent); }
 
     /* Lights */
     .lights{
@@ -407,11 +412,11 @@
       to{ transform: translateY(-520px); }
     }
 
-    /* REAL cake image area */
+    /* REAL cake image */
     .cakeWrap{
       position:absolute;
       left:50%;
-      bottom: 14px;
+      bottom: 12px;
       transform: translateX(-50%);
       width: min(420px, 88vw);
       height: 250px;
@@ -431,11 +436,10 @@
       -webkit-user-drag:none;
     }
 
-    /* Candle on top of cake image */
     .candle{
       position:absolute;
       left:50%;
-      bottom: 186px; /* adjust if your cake image differs */
+      bottom: 186px;
       transform: translateX(-50%);
       width:14px; height:38px;
       background: repeating-linear-gradient(
@@ -491,7 +495,7 @@
       to{ transform: translateY(260px) rotate(360deg); opacity:0;}
     }
 
-    /* Big popup modal (used after blow + also for page pop effects) */
+    /* Single popup modal (used ONLY for "Cake time" and final Happy Birthday) */
     .modal{
       position:fixed; inset:0;
       display:none;
@@ -504,10 +508,10 @@
     }
     .modal.show{ display:flex; }
     .modalCard{
-      width:min(700px, 100%);
+      width:min(760px, 100%);
       border-radius: 26px;
       padding: 26px 20px;
-      background: rgba(255,255,255,.86);
+      background: rgba(255,255,255,.90);
       border: 1px solid rgba(255,90,165,.20);
       box-shadow: 0 22px 70px rgba(0,0,0,.35);
       text-align:center;
@@ -516,15 +520,13 @@
       transform: translateY(12px) scale(.98);
       animation: popIn .45s ease forwards;
     }
-    @keyframes popIn{
-      to{ transform: translateY(0) scale(1); }
-    }
+    @keyframes popIn{ to{ transform: translateY(0) scale(1); } }
     body.party-dark .modalCard{
-      background: rgba(25,10,30,.86);
+      background: rgba(25,10,30,.90);
       border-color: rgba(255,139,198,.18);
     }
     .modalTitle{
-      font-size: clamp(26px, 4.2vw, 52px);
+      font-size: clamp(26px, 4.2vw, 56px);
       font-weight: 950;
       margin: 0 0 8px 0;
       color: var(--pink);
@@ -535,14 +537,18 @@
       margin: 0;
       font-size: clamp(14px, 1.9vw, 18px);
       color: rgba(106,75,99,.92);
-      font-weight: 700;
+      font-weight: 800;
     }
     body.party-dark .modalSub{ color: rgba(255,185,216,.92); }
 
     .closeBtn{
       margin-top:14px;
-      min-width: 170px;
+      min-width: 200px;
     }
+
+    /* Hide close button for final static popup */
+    .modal.static .closeBtn{ display:none; }
+    .modal.static .modalCard{ animation: popIn .45s ease forwards; }
 
     .hint{
       font-size: 12px;
@@ -558,28 +564,18 @@
     }
     body.party-dark .footer{ color: rgba(255,185,216,.65); }
 
-    /* Mobile adjustments */
     @media (max-width: 520px){
       body{ overflow:auto; }
-      .app{
-        height:auto;
-        min-height: 680px;
-      }
-      .page{
-        position:relative;
-        min-height: 680px;
-      }
-      .card{
-        max-height: none;
-      }
-      .scene{ height: 480px; }
-      .candle{ bottom: 200px; } /* a bit higher for small screens */
+      .app{ height:auto; min-height: 680px; }
+      .page{ position:relative; min-height: 680px; }
+      .card{ max-height: none; }
+      .scene{ height: 500px; }
+      .candle{ bottom: 200px; }
     }
   </style>
 </head>
 
 <body>
-  <!-- moving emojis in background (all pages) -->
   <div class="floating-layer" id="floatingLayer"></div>
 
   <div class="wrap">
@@ -605,7 +601,6 @@
 
             <div class="btnRow">
               <button id="btnCelebrate1" disabled>Let’s Celebrate 🎉</button>
-              <button class="secondary" id="skipPreview">Skip (Preview) ➜</button>
             </div>
           </div>
         </div>
@@ -650,7 +645,7 @@
             <p>Be honest… 😄</p>
             <div class="btnRow">
               <button id="yesP5">Yes ✅</button>
-              <button class="secondary" id="noBtn">No 🙈</button>
+              <button id="noBtn">No 🙈</button>
             </div>
             <p class="footer" id="noText"></p>
           </div>
@@ -675,18 +670,20 @@
         <div class="card">
           <div class="center">
             <h1>Let’s celebrate 🎊</h1>
-            <h3>Click the buttons to decorate</h3>
+            <h3>Click the button to decorate</h3>
 
-            <!-- Step-by-step buttons -->
+            <!-- SINGLE ACTION BUTTON -->
             <div class="btnRow" style="margin-top:14px;">
-              <button id="lightsBtn">Turn on the lights 💡</button>
-              <button id="musicBtn" class="hidden">Turn on the music 🎵</button>
-              <button id="balloonsBtn" class="hidden">Unwind the balloons 🎈</button>
-              <button id="startBtn" class="hidden">Let’s Start 🎂</button>
-              <button id="blowBtn" class="hidden" disabled>Blow the candle 💨</button>
+              <button id="actionBtn">Turn on the lights 💡</button>
             </div>
 
             <div class="scene" id="scene">
+              <!-- side blended pics (only after lights ON) -->
+              <div class="sidePics" id="sidePics">
+                <div class="side left" id="sideLeft"></div>
+                <div class="side right" id="sideRight"></div>
+              </div>
+
               <!-- Lights -->
               <div class="lights" id="lights">
                 <div class="wire"></div>
@@ -712,7 +709,7 @@
             </div>
 
             <p class="hint" id="musicHint" style="display:none;">
-              If your browser blocks autoplay, click “Turn on the music” again.
+              If your browser blocks autoplay, click the button again.
             </p>
 
             <!-- YouTube audio (hidden) -->
@@ -731,13 +728,13 @@
     </div>
   </div>
 
-  <!-- BIG POPUP MODAL -->
+  <!-- POPUP MODAL (ONLY for Cake time + Final Happy Birthday) -->
   <div class="modal" id="modal">
     <div class="modalCard">
-      <div class="modalTitle" id="modalTitle">Happy Birthday 💖</div>
-      <p class="modalSub" id="modalSub">🎉🎂✨</p>
+      <div class="modalTitle" id="modalTitle">Cake time 🎂</div>
+      <p class="modalSub" id="modalSub">✨💖🎉</p>
       <div class="btnRow">
-        <button class="closeBtn" id="closeModal">Awwww 🥹</button>
+        <button class="closeBtn" id="closeModal">Close</button>
       </div>
     </div>
   </div>
@@ -754,7 +751,11 @@
 
     // Put your YouTube link here:
     const YOUTUBE_URL = "https://youtu.be/9Tjhzkaj5jQ?si=fsnqkT-zsGEmEcvQ";
-    // Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+    // Side images on page 6: you will upload image1.jpg, image2.jpg... (or png)
+    // Put the correct extension here:
+    const SIDE_IMAGE_EXT = "jpg"; // change to "png" if your files are png
+    const SIDE_IMAGE_COUNT = 6;   // if you add 5-6 images, set count accordingly
 
     // =========================
     // Floating emojis background (all pages)
@@ -767,35 +768,21 @@
       const e = document.createElement("div");
       e.className = "float-emoji";
       e.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
-
-      const left = rand(-5, 105);
-      const size = rand(16, 34);
+      e.style.left = rand(-5, 105) + "vw";
+      e.style.bottom = "-40px";
+      e.style.fontSize = rand(16, 34) + "px";
       const duration = rand(9, 16);
       const delay = rand(0, 1.2);
-
-      e.style.left = left + "vw";
-      e.style.bottom = "-40px";
-      e.style.fontSize = size + "px";
       e.style.animationDuration = duration + "s";
       e.style.animationDelay = delay + "s";
-
-      // gentle horizontal drift by random translateX using CSS variable + transform via keyframe? (simple: add random translateX to inline style using translate3d)
-      const drift = rand(-40, 40);
-      e.style.transform = `translate3d(${drift}px, 0, 0)`;
-
       floatingLayer.appendChild(e);
-
-      // cleanup after animation
-      const totalLife = (duration + delay) * 1000 + 200;
-      setTimeout(() => e.remove(), totalLife);
+      setTimeout(() => e.remove(), (duration + delay) * 1000 + 200);
     }
-
-    // spawn at start + continuously
     for(let i=0;i<18;i++) spawnEmoji();
     setInterval(spawnEmoji, 520);
 
     // =========================
-    // Popup helpers (used "wherever possible")
+    // Modal (ONLY cake time + final)
     // =========================
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
@@ -804,53 +791,43 @@
 
     closeModalBtn.onclick = () => modal.classList.remove("show");
 
-    function showPopup(title, sub="✨💖🎉"){
-      modalTitle.textContent = title;
-      modalSub.textContent = sub;
+    function showCakePopup(){
+      modal.classList.remove("static");
+      closeModalBtn.style.display = "";
+      modalTitle.textContent = "Cake time 🎂";
+      modalSub.textContent = "✨💖🎉";
       modal.classList.add("show");
-      // auto close after a moment (still has button)
-      setTimeout(() => modal.classList.remove("show"), 2600);
+      // auto-hide quickly (only cake time popup)
+      setTimeout(() => modal.classList.remove("show"), 1400);
+    }
+
+    function showFinalPopup(title){
+      modal.classList.add("static");
+      modalTitle.textContent = title;
+      modalSub.textContent = "🎉🎂✨💖";
+      // hide close button and DO NOT auto-hide (static)
+      closeModalBtn.style.display = "none";
+      modal.classList.add("show");
     }
 
     // =========================
-    // Simple page router
+    // Router
     // =========================
     const pages = ["p1","p2","p3","p4","p5","p6"].map(id => document.getElementById(id));
     function showPage(id){
       pages.forEach(p => p.classList.toggle("active", p.id === id));
       const app = document.getElementById("app");
       if (window.innerWidth <= 520) app.scrollIntoView({behavior:"smooth", block:"start"});
-
-      // light popup effect on page changes
-      const popTitles = {
-        p2:"Happy Birthday Kaathambari 💖",
-        p3:"Yeyeyyy 🥳",
-        p4:"Quick Question 😌",
-        p5:"Madam jiii 💅",
-        p6:"Let’s Decorate 🎊"
-      };
-      if (popTitles[id]) showPopup(popTitles[id], "✨🎀🎉");
     }
 
-    // Buttons
+    // Page buttons
     const btnCelebrate1 = document.getElementById("btnCelebrate1");
     const btnCelebrate2 = document.getElementById("btnCelebrate2");
-    const skipPreview = document.getElementById("skipPreview");
-
     document.getElementById("toP4").onclick = () => showPage("p4");
     document.getElementById("yesP5").onclick = () => showPage("p5");
     document.getElementById("toP6").onclick = () => showPage("p6");
-
     btnCelebrate1.onclick = () => showPage("p2");
     btnCelebrate2.onclick = () => showPage("p3");
-
-    skipPreview.onclick = () => {
-      // Jump to page 6 for testing
-      showPage("p6");
-      // also unlock celebrate
-      btnCelebrate1.disabled = false;
-      btnCelebrate1.textContent = "Let’s Celebrate 🎉";
-    };
 
     // "No" playful
     const noBtn = document.getElementById("noBtn");
@@ -869,7 +846,7 @@
     };
 
     // =========================
-    // Countdown logic (Page 1)
+    // Countdown (Page 1)
     // =========================
     const hhEl = document.getElementById("hh");
     const mmEl = document.getElementById("mm");
@@ -882,11 +859,8 @@
     function getNextBirthdayTarget(){
       const now = new Date();
       const year = now.getFullYear();
-      // target at midnight start of Jan 15 (00:00:00)
       let target = new Date(year, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
-      if (now > target) {
-        target = new Date(year + 1, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
-      }
+      if (now > target) target = new Date(year + 1, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
       return target;
     }
 
@@ -913,7 +887,6 @@
         if (fastValue <= 0){
           clearInterval(fastTimer);
           enableCelebrate();
-          showPopup("It’s time! 🎉", "🎂✨💖");
           setTimeout(() => {
             fastEl.classList.remove("show");
             liveBoxes.style.display = "flex";
@@ -954,48 +927,29 @@
     tickCountdown();
 
     // =========================
-    // Celebration Scene (Page 6)
+    // Page 6: Single action button steps
     // =========================
+    const actionBtn = document.getElementById("actionBtn");
     const lights = document.getElementById("lights");
-    const lightsBtn = document.getElementById("lightsBtn");
-    const musicBtn = document.getElementById("musicBtn");
-    const balloonsBtn = document.getElementById("balloonsBtn");
-    const startBtn = document.getElementById("startBtn");
-    const blowBtn = document.getElementById("blowBtn");
-
     const balloonLayer = document.getElementById("balloonLayer");
     const cakeWrap = document.getElementById("cakeWrap");
-    const candle = document.getElementById("candle");
     const flame = document.getElementById("flame");
     const confetti = document.getElementById("confetti");
     const yt = document.getElementById("yt");
     const musicHint = document.getElementById("musicHint");
 
+    // side images
+    const sidePics = document.getElementById("sidePics");
+    const sideLeft = document.getElementById("sideLeft");
+    const sideRight = document.getElementById("sideRight");
+
+    let step = 0; // 0 lights, 1 music, 2 balloons, 3 cake, 4 blow
     let balloonsDone = false;
     let cakeShown = false;
     let candleBlown = false;
+    let slideshowTimer = null;
+    let slideIndex = 1;
 
-    // Step reveal helpers
-    function reveal(el){ el.classList.remove("hidden"); }
-    function hide(el){ el.classList.add("hidden"); }
-
-    // Lights -> also switches to dark theme + reveals Music button
-    lightsBtn.onclick = () => {
-      lights.classList.toggle("on");
-      const on = lights.classList.contains("on");
-      document.body.classList.toggle("party-dark", on);
-
-      lightsBtn.textContent = on ? "Lights are ON ✨" : "Turn on the lights 💡";
-
-      if (on){
-        reveal(musicBtn);
-        showPopup("Lights on ✨", "💡🎀✨");
-      } else {
-        // If turned off, keep steps visible; don't hide back
-      }
-    };
-
-    // YouTube music (embed autoplay)
     function extractYouTubeId(url){
       try{
         const u = new URL(url);
@@ -1005,26 +959,36 @@
       }catch(e){ return null; }
     }
 
-    musicBtn.onclick = () => {
-      const id = extractYouTubeId(YOUTUBE_URL);
-      if (!id){
-        alert("Please paste a valid YouTube link in YOUTUBE_URL inside the code.");
-        return;
-      }
-      yt.src = `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
-      musicBtn.textContent = "Music is ON 🎶";
-      musicHint.style.display = "block";
-      reveal(balloonsBtn);
-      showPopup("Music on 🎶", "🎵💖✨");
-    };
+    function startSideSlideshow(){
+      sidePics.classList.add("on");
 
-    // Balloons rise and stay at the top, then reveal Start button
+      function setBg(n){
+        const url = `image${n}.${SIDE_IMAGE_EXT}`;
+        sideLeft.style.backgroundImage = `url('${url}')`;
+        sideRight.style.backgroundImage = `url('${url}')`;
+      }
+
+      setBg(slideIndex);
+
+      if (slideshowTimer) clearInterval(slideshowTimer);
+      slideshowTimer = setInterval(() => {
+        slideIndex++;
+        if (slideIndex > SIDE_IMAGE_COUNT) slideIndex = 1;
+        setBg(slideIndex);
+      }, 3000);
+    }
+
+    function stopSideSlideshow(){
+      if (slideshowTimer) clearInterval(slideshowTimer);
+      slideshowTimer = null;
+    }
+
     function randomBetween(a,b){ return a + Math.random()*(b-a); }
 
-    balloonsBtn.onclick = () => {
+    function unwindBalloons(){
       if (balloonsDone) return;
       balloonsDone = true;
-      balloonsBtn.textContent = "Balloons 🎈 (Done)";
+
       const colors = [
         "rgba(255,90,165,.72)",
         "rgba(255,210,110,.75)",
@@ -1054,25 +1018,8 @@
           b.style.transform = "translateY(0)";
         }, { once:true });
       }
+    }
 
-      reveal(startBtn);
-      showPopup("Balloons! 🎈", "🎈🎉✨");
-    };
-
-    // Cake show -> reveal Blow button
-    startBtn.onclick = () => {
-      if (cakeShown) return;
-      cakeShown = true;
-      cakeWrap.classList.add("show");
-      startBtn.textContent = "Cake is here 🎂";
-
-      reveal(blowBtn);
-      blowBtn.disabled = false;
-
-      showPopup("Cake time 🎂", "🍰✨💖");
-    };
-
-    // Confetti burst
     function burstConfetti(){
       confetti.innerHTML = "";
       confetti.classList.add("show");
@@ -1093,24 +1040,86 @@
       return target.getFullYear() - DOB_YEAR;
     }
 
-    // Blow -> hide cake + BIG popup
-    blowBtn.onclick = () => {
-      if (candleBlown) return;
-      candleBlown = true;
+    function setActionLabel(){
+      const labels = [
+        "Turn on the lights 💡",
+        "Turn on the music 🎵",
+        "Unwind the balloons 🎈",
+        "Let’s Start 🎂",
+        "Blow the candle 💨"
+      ];
+      actionBtn.textContent = labels[Math.min(step, labels.length-1)];
+    }
+    setActionLabel();
 
-      flame.classList.add("off");
-      burstConfetti();
+    actionBtn.onclick = () => {
+      // only acts on page 6
+      if (!document.getElementById("p6").classList.contains("active")) return;
 
-      // Hide cake after a tiny delay for effect
-      setTimeout(() => {
-        cakeWrap.classList.remove("show");
-      }, 650);
+      if (step === 0){
+        // lights on + dark mode + side slideshow
+        lights.classList.add("on");
+        document.body.classList.add("party-dark");
+        startSideSlideshow();
 
-      const age = computeAgeOnNextBirthday();
-      showPopup(`Happy ${age}th Birthday, Kaathambari 💖`, "🎉🎂✨💖");
+        step = 1;
+        setActionLabel();
+        return;
+      }
 
-      blowBtn.textContent = "Candle blown ✨";
-      blowBtn.disabled = true;
+      if (step === 1){
+        // music on
+        const id = extractYouTubeId(YOUTUBE_URL);
+        if (!id){
+          alert("Please paste a valid YouTube link in YOUTUBE_URL inside the code.");
+          return;
+        }
+        yt.src = `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
+        musicHint.style.display = "block";
+        step = 2;
+        setActionLabel();
+        return;
+      }
+
+      if (step === 2){
+        // balloons
+        unwindBalloons();
+        step = 3;
+        setActionLabel();
+        return;
+      }
+
+      if (step === 3){
+        // show cake + cake time popup (ONLY popup besides final)
+        if (!cakeShown){
+          cakeShown = true;
+          cakeWrap.classList.add("show");
+          showCakePopup();
+        }
+        step = 4;
+        setActionLabel();
+        return;
+      }
+
+      if (step === 4){
+        // blow candle
+        if (candleBlown) return;
+        candleBlown = true;
+
+        flame.classList.add("off");
+        burstConfetti();
+
+        // hide cake after a tiny delay
+        setTimeout(() => cakeWrap.classList.remove("show"), 650);
+
+        const age = computeAgeOnNextBirthday();
+        showFinalPopup(`Happy ${age}th Birthday, Kaathambari 💖`);
+
+        // freeze button after final
+        actionBtn.disabled = true;
+        actionBtn.textContent = "💖";
+        return;
+      }
     };
   </script>
 </body>
