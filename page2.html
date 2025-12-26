@@ -18,7 +18,7 @@
     overflow: hidden;
     background: linear-gradient(135deg, #ff9a9e, #fad0c4);
     position: relative;
-    padding: 18px; /* helps on small screens */
+    padding: 18px;
   }
 
   /* Floating hearts */
@@ -39,11 +39,10 @@
     100% { transform: translateY(-20vh); opacity: 0; }
   }
 
-  /* Bigger card */
   .card {
-    width: min(94vw, 760px);              /* ⬅️ bigger max width */
+    width: min(94vw, 760px);
     background: rgba(255,255,255,0.92);
-    padding: 34px 26px 34px;             /* ⬅️ more padding */
+    padding: 34px 26px 34px;
     border-radius: 26px;
     box-shadow: 0 26px 60px rgba(0,0,0,0.22);
     text-align: center;
@@ -53,46 +52,74 @@
 
   h1 {
     margin: 0 0 18px;
-    font-size: clamp(26px, 4vw, 44px);   /* ⬅️ slightly bigger heading */
+    font-size: clamp(26px, 4vw, 44px);
     color: #4b0033;
   }
 
   .playArea {
     position: relative;
-    height: 260px;                       /* ⬅️ slightly bigger play area */
+    height: 280px;
     border-radius: 20px;
     background: rgba(255,255,255,0.62);
     border: 2px dashed rgba(255,0,128,0.28);
     overflow: hidden;
+    padding: 12px;
   }
 
-  button {
+  .btn {
     position: absolute;
     padding: 14px 26px;
     border: none;
     border-radius: 999px;
-    background: linear-gradient(135deg, #ff3b9d, #ff77c8);
     color: white;
     font-weight: 800;
     cursor: pointer;
     box-shadow: 0 14px 30px rgba(255,59,157,0.35);
     transition: transform 0.1s ease;
+    user-select: none;
+    will-change: left, top, transform;
   }
 
-  button:active { transform: scale(0.95); }
+  .btn:active { transform: scale(0.95); }
 
-  /* Reveal section is INSIDE card layout (no absolute positioning) */
-  .reveal {
+  .btnYes {
+    background: linear-gradient(135deg, #22c55e, #86efac);
+    color: #083018;
+    box-shadow: 0 14px 30px rgba(34,197,94,0.25);
+  }
+
+  .btnNo {
+    background: linear-gradient(135deg, #ff3b9d, #ff77c8);
+  }
+
+  /* Text inside the box (playArea) */
+  .boxMsg {
+    position: absolute;
+    inset: 0;
     display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(22px, 3.5vw, 38px);
+    font-weight: 900;
+    color: #4b0033;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 18px;
+    text-align: center;
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(6px);
+  }
+
+  .reveal {
     margin-top: 24px;
+    display: block; /* keep "I know you..." always visible as you said */
     animation: fadeIn 0.4s ease forwards;
   }
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Next button should not be absolute — keep it inside */
   .nextWrap{
     margin-top: 16px;
     display: flex;
@@ -100,16 +127,21 @@
   }
 
   .nextBtn {
-    position: static;                    /* ✅ important: keeps it inside card */
+    position: static;
     padding: 14px 30px;
     font-size: 16px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 900;
+    color: white;
     background: linear-gradient(135deg, #7c3aed, #ff3b9d);
     box-shadow: 0 16px 36px rgba(124,58,237,0.35);
   }
 
   @media (max-width: 520px) {
     .card { padding: 26px 18px 28px; }
-    .playArea { height: 280px; }
+    .playArea { height: 320px; }
   }
 </style>
 </head>
@@ -122,12 +154,16 @@
   <h1 id="question">Do you really love me? 🥺</h1>
 
   <div class="playArea" id="playArea">
-    <button id="noBtn">No</button>
+    <button class="btn btnYes" id="yesBtn" type="button">Yes</button>
+    <button class="btn btnNo" id="noBtn" type="button">No</button>
+
+    <!-- After 5 combined teleports, show this INSIDE the box -->
+    <div class="boxMsg" id="boxMsg">Just Kidding 😜</div>
   </div>
 
+  <!-- Keep this already there -->
   <div class="reveal" id="reveal">
     <h1 style="margin-top: 6px;">I know you really love me 😏💖</h1>
-
     <div class="nextWrap">
       <button class="nextBtn" type="button" onclick="goNext()">Next 💕</button>
     </div>
@@ -144,65 +180,85 @@
     h.className = "heart";
     h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
     h.style.left = Math.random() * 100 + "vw";
-    h.style.fontSize = 14 + Math.random() * 18 + "px";
-    h.style.animationDuration = 6 + Math.random() * 6 + "s";
+    h.style.fontSize = (14 + Math.random() * 18) + "px";
+    h.style.animationDuration = (6 + Math.random() * 6) + "s";
     hearts.appendChild(h);
     setTimeout(() => h.remove(), 12000);
   }, 350);
 
-  // Button escape logic
-  const noBtn = document.getElementById("noBtn");
+  // Teleport logic (combined 5 times for BOTH buttons)
   const playArea = document.getElementById("playArea");
-  const reveal = document.getElementById("reveal");
-  const question = document.getElementById("question");
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const boxMsg = document.getElementById("boxMsg");
 
-  let escapes = 3;
+  let teleportsLeft = 5;
   let done = false;
 
-  centerButton();
+  // initial placement
+  placePercent(yesBtn, 35, 58);
+  placePercent(noBtn, 65, 58);
 
-  function centerButton() {
-    noBtn.style.left = "50%";
-    noBtn.style.top = "55%";
-    noBtn.style.transform = "translate(-50%, -50%)";
+  function placePercent(btn, xPercent, yPercent) {
+    btn.style.left = xPercent + "%";
+    btn.style.top  = yPercent + "%";
+    btn.style.transform = "translate(-50%, -50%)";
   }
 
-  function moveButton() {
+  function randomPosFor(btn) {
+    const area = playArea.getBoundingClientRect();
+    const br = btn.getBoundingClientRect();
+    const pad = 12;
+
+    const maxX = Math.max(pad, area.width - br.width - pad);
+    const maxY = Math.max(pad, area.height - br.height - pad);
+
+    const x = pad + Math.random() * (maxX - pad);
+    const y = pad + Math.random() * (maxY - pad);
+
+    return { x, y };
+  }
+
+  function teleport(btn) {
     if (done) return;
 
-    escapes--;
+    teleportsLeft--;
 
-    // After 3 runaways, reveal next
-    if (escapes < 0) {
-      finish();
-      return;
+    // move button
+    const pos = randomPosFor(btn);
+    btn.style.left = pos.x + "px";
+    btn.style.top  = pos.y + "px";
+    btn.style.transform = "translate(0,0)";
+
+    // small pop animation
+    btn.animate(
+      [{ transform: "translate(0,0) scale(1)" },
+       { transform: "translate(0,0) scale(1.07)" },
+       { transform: "translate(0,0) scale(1)" }],
+      { duration: 220, easing: "ease-out" }
+    );
+
+    // after 5 combined teleports, show "Just Kidding" inside the box
+    if (teleportsLeft <= 0) {
+      done = true;
+      yesBtn.style.display = "none";
+      noBtn.style.display = "none";
+      boxMsg.style.display = "flex";
     }
-
-    const area = playArea.getBoundingClientRect();
-    const btn = noBtn.getBoundingClientRect();
-
-    const pad = 12;
-    const x = Math.random() * (area.width - btn.width - pad*2) + pad;
-    const y = Math.random() * (area.height - btn.height - pad*2) + pad;
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-    noBtn.style.transform = "translate(0,0)";
   }
 
-  function finish() {
-    done = true;
-    noBtn.style.display = "none";
-    question.textContent = "Okay… confession time 😌";
-    reveal.style.display = "block";
-  }
+  // Hover + click (mobile fallback)
+  ["mouseenter","click"].forEach(evt => {
+    yesBtn.addEventListener(evt, () => teleport(yesBtn));
+    noBtn.addEventListener(evt, () => teleport(noBtn));
+  });
 
-  noBtn.addEventListener("mouseenter", moveButton);
-  noBtn.addEventListener("click", moveButton);
-
-  // Keep button safe on resize
+  // keep safe on resize if not done
   window.addEventListener("resize", () => {
-    if (!done) centerButton();
+    if (!done) {
+      placePercent(yesBtn, 35, 58);
+      placePercent(noBtn, 65, 58);
+    }
   });
 
   function goNext() {
