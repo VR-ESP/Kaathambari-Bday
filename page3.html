@@ -3,80 +3,880 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Page 3 – Continued Surprise</title>
-
+  <title>Our Journey ✨</title>
   <style>
+    :root{
+      /* more colorful palette */
+      --bgA:#ff4d9a;
+      --bgB:#7a5cff;
+      --bgC:#2fe4ff;
+      --bgD:#ffd166;
+      --ink:#101015;
+      --muted:#2b2b33;
+      --glass: rgba(255,255,255,.18);
+      --glass2: rgba(255,255,255,.10);
+      --stroke: rgba(255,255,255,.25);
+      --shadow: 0 24px 80px rgba(0,0,0,.25);
+      --radius: 26px;
+      --ease: cubic-bezier(.2,.85,.2,1);
+    }
+    *{box-sizing:border-box}
     body{
       margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:#fff;
+      overflow:hidden;
       background:
-        radial-gradient(900px 600px at 20% 20%, #ffe2ef, transparent 60%),
-        radial-gradient(900px 600px at 80% 80%, #ffd3e8, transparent 55%),
-        linear-gradient(180deg, #fff1f7, #ffffff);
-      color:#2b1b2b;
+        radial-gradient(900px 700px at 15% 15%, rgba(255,77,154,.55), transparent 60%),
+        radial-gradient(900px 700px at 85% 20%, rgba(47,228,255,.50), transparent 55%),
+        radial-gradient(1000px 800px at 70% 90%, rgba(255,209,102,.45), transparent 55%),
+        radial-gradient(1100px 900px at 15% 85%, rgba(122,92,255,.55), transparent 60%),
+        linear-gradient(135deg, #120023, #0b0b1a 60%, #070716);
     }
 
-    .card{
-      width:min(720px, 92%);
-      background: rgba(255,255,255,.75);
-      border-radius:24px;
-      padding:32px 22px;
-      box-shadow: 0 20px 60px rgba(27,10,27,.15);
+    /* floating background blobs */
+    .blob{
+      position:absolute; inset:auto;
+      width:420px; height:420px;
+      border-radius:999px;
+      filter: blur(1px);
+      opacity:.55;
+      mix-blend-mode: screen;
+      animation: blobFloat 10s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .b1{ left:-120px; top:-120px; background: radial-gradient(circle at 30% 30%, #ff4d9a, transparent 62%), radial-gradient(circle at 65% 70%, #7a5cff, transparent 60%); }
+    .b2{ right:-160px; top:40px; background: radial-gradient(circle at 30% 30%, #2fe4ff, transparent 62%), radial-gradient(circle at 65% 70%, #ffd166, transparent 60%); animation-delay:-2s;}
+    .b3{ left:80px; bottom:-200px; width:520px; height:520px; background: radial-gradient(circle at 30% 30%, #ffd166, transparent 60%), radial-gradient(circle at 70% 70%, #ff4d9a, transparent 62%); animation-delay:-4s;}
+    @keyframes blobFloat{
+      0%,100%{ transform: translate(0,0) scale(1); }
+      50%{ transform: translate(20px,-18px) scale(1.04); }
+    }
+
+    .stage{
+      position:relative;
+      width:100vw;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    .deck{
+      position:relative;
+      width:min(1120px, 96vw);
+      height:min(640px, 92vh);
+      border-radius: 34px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255,255,255,.18);
+      background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
+      backdrop-filter: blur(14px);
+    }
+
+    /* subtle glitter particles */
+    .spark{
+      position:absolute;
+      width:6px; height:6px;
+      border-radius:50%;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 0 18px rgba(255,255,255,.55);
+      opacity:.65;
+      animation: spark 5s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes spark{
+      0%{ transform: translateY(30px) scale(.6); opacity:0; }
+      15%{ opacity:.7; }
+      100%{ transform: translateY(-720px) scale(1); opacity:0; }
+    }
+
+    /* Slides */
+    .slide{
+      position:absolute; inset:0;
+      padding:34px;
+      display:grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap:22px;
+      opacity:0;
+      pointer-events:none;
+      transform: scale(.985);
+      transition: opacity 420ms var(--ease), transform 420ms var(--ease);
+    }
+    .slide.active{ opacity:1; pointer-events:auto; transform: scale(1); }
+
+    /* Collage */
+    .collage{
+      position:relative;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.22);
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.05));
+      overflow:hidden;
+    }
+
+    .photo{
+      position:absolute;
+      border-radius: 26px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 20px 55px rgba(0,0,0,.35);
+      opacity:0;
+      transform: translate3d(0,0,0);
+      will-change: transform, opacity;
+    }
+    .photo img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+      filter: saturate(1.08) contrast(1.06);
+      transform: scale(1.02);
+      animation: ken 12s ease-in-out infinite;
+    }
+    @keyframes ken{
+      0%,100%{ transform: scale(1.02); }
+      50%{ transform: scale(1.08); }
+    }
+
+    /* Text panel */
+    .copy{
+      position:relative;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.22);
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      padding:22px 22px 18px;
+      overflow:hidden;
+    }
+    .year{
+      font-size: clamp(34px, 4vw, 56px);
+      font-weight: 900;
+      letter-spacing:.5px;
+      margin: 0 0 10px;
+      opacity:0;
+      transform: translateY(16px);
+      text-shadow: 0 12px 30px rgba(0,0,0,.25);
+    }
+    .title{
+      font-size: 18px;
+      font-weight:800;
+      margin:0 0 10px;
+      color: rgba(255,255,255,.88);
+      opacity:0;
+      transform: translateY(16px);
+    }
+    .quote{
+      font-size: clamp(18px, 2.2vw, 23px);
+      line-height: 1.6;
+      margin: 10px 0 0;
+      font-style: italic;
+      color: rgba(255,255,255,.95);
+      opacity:0;
+      transform: translateY(16px);
+    }
+    .dialogue{
+      margin-top:16px;
+      padding:14px 14px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.92);
+      font-size: 15px;
+      line-height:1.45;
+      opacity:0;
+      transform: translateY(16px);
+    }
+    .dialogue b{ color:#fff; }
+
+    /* slide animation presets */
+    .slide.play .year{ animation: rise 820ms var(--ease) forwards; }
+    .slide.play .title{ animation: rise 820ms var(--ease) 120ms forwards; }
+    .slide.play .quote{ animation: rise 820ms var(--ease) 260ms forwards; }
+    .slide.play .dialogue{ animation: rise 820ms var(--ease) 420ms forwards; }
+
+    @keyframes rise{
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    /* More animations: each photo has a different entrance */
+    .slide.play .photo.p1{ animation: flyInLeft 950ms var(--ease) 140ms forwards; }
+    .slide.play .photo.p2{ animation: flyInRight 950ms var(--ease) 260ms forwards; }
+    .slide.play .photo.p3{ animation: popSpin 980ms var(--ease) 380ms forwards; }
+
+    @keyframes flyInLeft{
+      0%{ opacity:0; transform: translateX(-60px) translateY(30px) rotate(-6deg) scale(.92); }
+      70%{ opacity:1; transform: translateX(6px) translateY(-2px) rotate(1deg) scale(1.02); }
+      100%{ opacity:1; transform: translateX(0) translateY(0) rotate(0) scale(1); }
+    }
+    @keyframes flyInRight{
+      0%{ opacity:0; transform: translateX(60px) translateY(30px) rotate(6deg) scale(.92); }
+      70%{ opacity:1; transform: translateX(-6px) translateY(-2px) rotate(-1deg) scale(1.02); }
+      100%{ opacity:1; transform: translateX(0) translateY(0) rotate(0) scale(1); }
+    }
+    @keyframes popSpin{
+      0%{ opacity:0; transform: translateY(40px) rotate(-10deg) scale(.75); }
+      70%{ opacity:1; transform: translateY(-6px) rotate(2deg) scale(1.04); }
+      100%{ opacity:1; transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    /* gentle drift for photo frames while slide is active */
+    .slide.active .photo{ animation: drift 5.5s ease-in-out infinite; }
+    .slide.active .photo.p2{ animation-delay:-1.2s; }
+    .slide.active .photo.p3{ animation-delay:-2.4s; }
+    @keyframes drift{
+      0%,100%{ transform: translateY(0) translateX(0); }
+      50%{ transform: translateY(-10px) translateX(6px); }
+    }
+    /* IMPORTANT: the entrance animation sets opacity; drift shouldn't kill opacity */
+    .slide.active.play .photo{ animation: none; } /* while entering, don't drift */
+    .slide.active.play.entered .photo{ animation: drift 5.5s ease-in-out infinite; } /* after entering */
+
+    /* Intro "envelope" slide */
+    .introWrap{
+      grid-template-columns: 1fr;
+      place-items:center;
       text-align:center;
     }
-
-    h1{
-      font-size: clamp(28px, 4vw, 44px);
-      margin:0 0 12px 0;
-      color:#ff5aa5;
-    }
-
-    p{
-      font-size: clamp(14px, 1.8vw, 17px);
-      color:#6a4b63;
-      margin:10px 0;
-    }
-
-    .btnRow{
-      margin-top:22px;
+    .introCard{
+      width:min(820px, 95%);
+      height:min(520px, 92%);
+      border-radius: 34px;
+      border:1px solid rgba(255,255,255,.24);
+      background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      position:relative;
+      overflow:hidden;
+      box-shadow: 0 22px 70px rgba(0,0,0,.35);
       display:flex;
+      align-items:center;
       justify-content:center;
-      gap:12px;
-      flex-wrap:wrap;
+      padding:26px;
+    }
+    .pin{
+      position:absolute; top:18px; right:30px;
+      width:16px; height:16px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #ffd166);
+      box-shadow: 0 12px 25px rgba(255,209,102,.35);
+    }
+    .ribbon{
+      position:absolute;
+      width:120%;
+      height:110px;
+      left:-10%;
+      top:40%;
+      transform: rotate(-8deg);
+      background: linear-gradient(90deg, rgba(255,77,154,.95), rgba(122,92,255,.95), rgba(47,228,255,.95));
+      opacity:.28;
+      filter: blur(.2px);
+    }
+    .note{
+      width:min(520px, 90%);
+      border-radius: 26px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.18);
+      padding:22px 18px;
+      position:relative;
+    }
+    .introTitle{
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 950;
+      margin: 0 0 8px;
+    }
+    .introSub{
+      margin:0;
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height:1.55;
+      color: rgba(255,255,255,.92);
+      font-style: italic;
+    }
+    .introHint{
+      margin-top:14px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.92);
+      font-weight:800;
+      font-size:13px;
+    }
+    .pulseDot{
+      width:10px;height:10px;border-radius:50%;
+      background: #2fe4ff;
+      box-shadow: 0 0 0 rgba(47,228,255,.6);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%{ box-shadow: 0 0 0 0 rgba(47,228,255,.6); }
+      70%{ box-shadow: 0 0 0 16px rgba(47,228,255,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(47,228,255,0); }
     }
 
-    a.button{
-      text-decoration:none;
-      background: linear-gradient(135deg, #ff5aa5, #ff8bc6);
-      color:white;
-      padding:12px 18px;
-      border-radius:16px;
+    .slide.play .introCard{ animation: introZoom 900ms var(--ease) forwards; }
+    @keyframes introZoom{
+      0%{ transform: scale(.92) rotate(-1deg); opacity:0; }
+      70%{ transform: scale(1.02) rotate(.4deg); opacity:1; }
+      100%{ transform: scale(1) rotate(0); opacity:1; }
+    }
+
+    /* End letter template slide */
+    .letterWrap{
+      grid-template-columns: 1fr;
+      place-items:center;
+    }
+    .letterCard{
+      width:min(900px, 96%);
+      height:min(560px, 94%);
+      border-radius: 34px;
+      border:1px solid rgba(255,255,255,.24);
+      background:
+        radial-gradient(420px 320px at 10% 20%, rgba(255,77,154,.35), transparent 60%),
+        radial-gradient(420px 320px at 90% 10%, rgba(47,228,255,.28), transparent 60%),
+        radial-gradient(520px 420px at 70% 90%, rgba(255,209,102,.28), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      box-shadow: 0 22px 70px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .letterHeader{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .letterHeader h2{
+      margin:0;
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing:.3px;
+    }
+    .heartRow{
+      display:flex; gap:8px; opacity:.9;
+      font-size:18px;
+    }
+    .paper{
+      flex:1;
+      border-radius: 26px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.18);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .paper::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.10) 0px,
+          rgba(255,255,255,.10) 2px,
+          transparent 2px,
+          transparent 30px
+        );
+      opacity:.5;
+      pointer-events:none;
+    }
+    .placeholder{
+      position:relative;
+      z-index:2;
+      width:100%;
+      height:100%;
+      border-radius: 18px;
+      background: rgba(255,255,255,.06);
+      border:1px dashed rgba(255,255,255,.28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:18px;
+      color: rgba(255,255,255,.92);
       font-weight:800;
-      box-shadow: 0 10px 22px rgba(255,90,165,.25);
+      font-size: 16px;
+      line-height:1.5;
+    }
+    .noteSmall{
+      opacity:.9;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    /* HIDE all UI: buttons/progress/counter (but keyboard still works) */
+    .hud{ display:none !important; }
+
+    /* Mobile layout */
+    @media (max-width: 860px){
+      .slide{ grid-template-columns: 1fr; grid-template-rows: 1.05fr .95fr; }
+      .deck{ height:min(780px, 94vh); }
+    }
+
+    /* Audio button (hidden UI, but we still add a tiny invisible interaction area for autoplay policy) */
+    .tapToEnableAudio{
+      position:absolute;
+      inset:0;
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:16px;
+      z-index:40;
+      pointer-events:none;
+    }
+    .tapToEnableAudio.show{
+      display:flex;
+      pointer-events:auto;
+    }
+    .tapToEnableAudio button{
+      border:1px solid rgba(255,255,255,.25);
+      background: rgba(0,0,0,.35);
+      color:#fff;
+      padding:12px 16px;
+      border-radius:999px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow: 0 18px 45px rgba(0,0,0,.35);
     }
   </style>
 </head>
-
 <body>
-  <div class="card">
-    <h1>🎉 You made it to Page 3 🎉</h1>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
 
-    <p>
-      This page confirms that the <strong>Continue ➜</strong> button
-      redirect from <code>index.html</code> is working perfectly 💖
-    </p>
+  <div class="stage">
+    <div class="deck" id="deck">
+      <!-- sparkles -->
+      <div class="spark" style="left:8%; bottom:-10px; animation-delay:-.2s;"></div>
+      <div class="spark" style="left:18%; bottom:-30px; animation-delay:-1.2s;"></div>
+      <div class="spark" style="left:32%; bottom:-50px; animation-delay:-2.4s;"></div>
+      <div class="spark" style="left:48%; bottom:-20px; animation-delay:-.8s;"></div>
+      <div class="spark" style="left:63%; bottom:-40px; animation-delay:-1.8s;"></div>
+      <div class="spark" style="left:78%; bottom:-60px; animation-delay:-3s;"></div>
+      <div class="spark" style="left:90%; bottom:-25px; animation-delay:-2.1s;"></div>
 
-    <p>
-      You can now build anything here:
-      <br/>💌 a letter, 📸 memories gallery, 🎥 video, or 💖 love notes.
-    </p>
+      <!-- Invisible-ish prompt for audio enable (browser policy) -->
+      <div class="tapToEnableAudio" id="audioGate">
+        <button id="enableAudioBtn">🔊 Tap once to enable music</button>
+      </div>
 
-    <div class="btnRow">
-      <a class="button" href="index.html">⬅ Back to Birthday Page</a>
+      <!-- =========================
+           SLIDE 0: INTRO (stylish)
+           ========================= -->
+      <section class="slide introWrap"
+               data-type="intro"
+               data-year=""
+               data-title=""
+               data-quote=""
+               data-dialogue="">
+        <div class="introCard">
+          <div class="pin"></div>
+          <div class="ribbon"></div>
+
+          <div class="note">
+            <div class="introTitle">A Message From My Heart 💌</div>
+            <div class="introHint"><span class="pulseDot"></span> Press <b>→</b> to begin</div>
+          </div>
+        </div>
+        <div style="display:none"></div>
+      </section>
+
+      <!-- =========================
+           SLIDES 1–10 (your journey)
+           Use image11..image25
+           ========================= -->
+
+      <!-- Slide 1 (2 photos) -->
+      <section class="slide" data-year="2020" data-title="Where it all started"
+        data-quote="&ldquo;Some beginnings feel like destiny.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; First message?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Best decision 😄">
+        <div class="collage">
+          <div class="photo p1" style="left:18px; top:18px; width:56%; height:56%;">
+            <img src="image11.jpg" alt="image11">
+          </div>
+          <div class="photo p2" style="right:18px; bottom:18px; width:54%; height:54%;">
+            <img src="image12.jpg" alt="image12">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 2 (2 photos) -->
+      <section class="slide" data-year="2020" data-title="First memories"
+        data-quote="&ldquo;We didn’t know it then… but we were building a forever.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; One more photo?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Always 😘">
+        <div class="collage">
+          <div class="photo p1" style="left:20px; top:40px; width:52%; height:62%;">
+            <img src="image13.jpg" alt="image13">
+          </div>
+          <div class="photo p2" style="right:22px; top:18px; width:44%; height:44%;">
+            <img src="image14.jpg" alt="image14">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 3 (2 photos) -->
+      <section class="slide" data-year="2021" data-title="Closer every day"
+        data-quote="&ldquo;In a world of chaos, you were my calm.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; Miss you.  &nbsp; &lt;b&gt;Me:&lt;/b&gt; More than words 🤍">
+        <div class="collage">
+          <div class="photo p1" style="left:22px; top:20px; width:60%; height:48%;">
+            <img src="image15.jpg" alt="image15">
+          </div>
+          <div class="photo p2" style="right:22px; bottom:20px; width:52%; height:56%;">
+            <img src="image16.jpg" alt="image16">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 4 (2 photos) -->
+      <section class="slide" data-year="2022" data-title="Our little adventures"
+        data-quote="&ldquo;Every place became special… because you were there.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; Same spot again?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; New memories, same us 💫">
+        <div class="collage">
+          <div class="photo p1" style="left:20px; bottom:20px; width:54%; height:54%;">
+            <img src="image17.jpg" alt="image17">
+          </div>
+          <div class="photo p2" style="right:20px; top:20px; width:56%; height:56%;">
+            <img src="image18.jpg" alt="image18">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 5 (2 photos) -->
+      <section class="slide" data-year="2023" data-title="Stronger together"
+        data-quote="&ldquo;No matter what… we choose each other.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; Promise?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Always. Pinky promise 🫶">
+        <div class="collage">
+          <div class="photo p1" style="left:22px; top:22px; width:46%; height:60%;">
+            <img src="image19.jpg" alt="image19">
+          </div>
+          <div class="photo p2" style="right:22px; bottom:22px; width:50%; height:52%;">
+            <img src="image20.jpg" alt="image20">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 6 (3 photos) -->
+      <section class="slide" data-year="2024" data-title="More laughs, more love"
+        data-quote="&ldquo;You + me = my favorite place.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; Smile!  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Only if you’re in the frame 😄">
+        <div class="collage">
+          <div class="photo p1" style="left:18px; top:18px; width:54%; height:54%;">
+            <img src="image21.jpg" alt="image21">
+          </div>
+          <div class="photo p2" style="right:18px; top:36px; width:40%; height:40%;">
+            <img src="image22.jpg" alt="image22">
+          </div>
+          <div class="photo p3" style="left:30px; bottom:20px; width:46%; height:40%;">
+            <img src="image23.jpg" alt="image23">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 7 (3 photos) -->
+      <section class="slide" data-year="2024" data-title="Tiny moments, big meaning"
+        data-quote="&ldquo;Love is the little things… done together.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; Another candid?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Candid is your best look 😍">
+        <div class="collage">
+          <div class="photo p1" style="left:18px; top:26px; width:44%; height:52%;">
+            <img src="image24.jpg" alt="image24">
+          </div>
+          <div class="photo p2" style="right:18px; top:18px; width:50%; height:40%;">
+            <img src="image25.jpg" alt="image25">
+          </div>
+          <div class="photo p3" style="right:30px; bottom:22px; width:42%; height:44%;">
+            <img src="image11.jpg" alt="image11">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 8 (3 photos) -->
+      <section class="slide" data-year="2025" data-title="New dreams"
+        data-quote="&ldquo;The best chapters are still ahead.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; What’s next?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Everything… with you ✨">
+        <div class="collage">
+          <div class="photo p1" style="left:18px; top:18px; width:50%; height:58%;">
+            <img src="image12.jpg" alt="image12">
+          </div>
+          <div class="photo p2" style="right:18px; top:44px; width:44%; height:40%;">
+            <img src="image13.jpg" alt="image13">
+          </div>
+          <div class="photo p3" style="left:40px; bottom:20px; width:54%; height:38%;">
+            <img src="image14.jpg" alt="image14">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 9 (3 photos) -->
+      <section class="slide" data-year="2025" data-title="Forever vibes"
+        data-quote="&ldquo;With you, even ordinary is magical.&rdquo;"
+        data-dialogue="&lt;b&gt;You:&lt;/b&gt; One last pose?  &nbsp; &lt;b&gt;Me:&lt;/b&gt; Only if I can hold you 🫶">
+        <div class="collage">
+          <div class="photo p1" style="left:22px; top:20px; width:52%; height:44%;">
+            <img src="image15.jpg" alt="image15">
+          </div>
+          <div class="photo p2" style="right:22px; top:22px; width:44%; height:54%;">
+            <img src="image16.jpg" alt="image16">
+          </div>
+          <div class="photo p3" style="left:26px; bottom:22px; width:58%; height:40%;">
+            <img src="image17.jpg" alt="image17">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- Slide 10 (3 photos) - dialogue removed as requested -->
+      <section class="slide" data-year="❤️" data-title="And this is only the beginning…"
+        data-quote="&ldquo;Happy Birthday, my love. My favorite story is us.&rdquo;"
+        data-dialogue="">
+        <div class="collage">
+          <div class="photo p1" style="left:18px; top:18px; width:46%; height:56%;">
+            <img src="image18.jpg" alt="image18">
+          </div>
+          <div class="photo p2" style="right:18px; top:18px; width:46%; height:40%;">
+            <img src="image19.jpg" alt="image19">
+          </div>
+          <div class="photo p3" style="right:26px; bottom:22px; width:54%; height:50%;">
+            <img src="image20.jpg" alt="image20">
+          </div>
+        </div>
+        <div class="copy"></div>
+      </section>
+
+      <!-- =========================
+           SLIDE 11: FINAL LETTER TEMPLATE (static, colorful)
+           ========================= -->
+      <section class="slide letterWrap"
+               data-type="letter"
+               data-year=""
+               data-title=""
+               data-quote=""
+               data-dialogue="">
+        <div class="letterCard">
+          <div class="letterHeader">
+            <h2>💖 Your Note / Letter Page</h2>
+            <div class="heartRow">💗 💛 💙 💜</div>
+          </div>
+          <div class="paper">
+            <div class="placeholder">
+              <div>
+                <div style="font-size:18px; font-weight:950; margin-bottom:8px;">Write your letter here ✍️</div>
+                <div class="noteSmall">
+                  (This page is intentionally empty & static. You can add your message in HTML later.)
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="noteSmall">Tip: Press ← / → to navigate. Space to pause autoplay.</div>
+        </div>
+        <div style="display:none"></div>
+      </section>
+
+      <!-- Hidden HUD (kept for logic, but hidden by CSS as you requested) -->
+      <div class="hud">
+        <div class="btns">
+          <button id="prevBtn">◀ Prev</button>
+          <button id="pauseBtn">⏸ Pause</button>
+          <button id="nextBtn">Next ▶</button>
+        </div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+        <div class="counter" id="counter">1 / 10</div>
+      </div>
+
+      <!-- MUSIC: add your YouTube / audio link -->
+      <!-- Prefer an MP3 file if possible; YouTube autoplay is often blocked.
+           You can still paste a YouTube audio link in your Page1 and keep music there.
+           Here we use HTML5 audio: -->
+      <audio id="bgMusic" loop preload="auto">
+        <!-- Replace with your own file (mp3/ogg). Example: <source src="music.mp3" type="audio/mpeg"> -->
+      </audio>
     </div>
   </div>
+
+  <script>
+    // ==========================
+    // Changes implemented:
+    // 1) Buttons hidden (but keyboard works)
+    // 2) Bar & counter hidden (kept only for logic)
+    // 3) More colourful theme
+    // 4) "Chapter ..." series removed completely (no tag now)
+    // 5) More animations (fly-in + drift + sparkles)
+    // 6) Last slide dialogue removed
+    // 7) Music play support (audio element + tap gate)
+    // 8) Added stylish intro slide (like your attachment vibe)
+    // 9) After 10 slides, added static colorful letter template slide
+    // ==========================
+
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const bar = document.getElementById("bar");
+    const counter = document.getElementById("counter");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+
+    const bgMusic = document.getElementById("bgMusic");
+    const audioGate = document.getElementById("audioGate");
+    const enableAudioBtn = document.getElementById("enableAudioBtn");
+
+    // Auto-play like PPT
+    const SLIDE_MS = 6500; // adjust
+    let index = 0;
+    let timer = null;
+    let paused = false;
+
+    function fillCopy(slide){
+      const type = slide.dataset.type || "normal";
+      if(type === "intro" || type === "letter") return;
+
+      const copy = slide.querySelector(".copy");
+      const year = slide.dataset.year || "";
+      const title = slide.dataset.title || "";
+      const quote = slide.dataset.quote || "";
+      const dialogue = slide.dataset.dialogue || "";
+
+      // Dialogue block is optional now
+      copy.innerHTML = `
+        <div class="year">${year}</div>
+        <div class="title">${title}</div>
+        <div class="quote">${quote}</div>
+        ${dialogue ? `<div class="dialogue">${dialogue}</div>` : ``}
+      `;
+    }
+
+    slides.forEach(fillCopy);
+
+    function markEntered(slide){
+      // after entrance animation, enable drifting
+      slide.classList.add("entered");
+    }
+
+    function setActive(i){
+      slides.forEach((s, n) => {
+        s.classList.toggle("active", n === i);
+        s.classList.remove("play");
+        s.classList.remove("entered");
+        if(n === i){
+          // reset animations
+          void s.offsetWidth;
+          s.classList.add("play");
+          // after entrance completes, allow drift
+          setTimeout(() => markEntered(s), 1200);
+        }
+      });
+
+      // keep these updated (even though hidden)
+      if(counter) counter.textContent = `${i+1} / ${slides.length}`;
+      if(bar) bar.style.width = `${((i+1)/slides.length) * 100}%`;
+    }
+
+    function next(){
+      index = Math.min(index + 1, slides.length - 1);
+      setActive(index);
+      restartTimer();
+      tryStartMusic();
+    }
+
+    function prev(){
+      index = Math.max(index - 1, 0);
+      setActive(index);
+      restartTimer();
+      tryStartMusic();
+    }
+
+    function restartTimer(){
+      if(paused) return;
+      if(timer) clearInterval(timer);
+      timer = setInterval(() => {
+        // Stop autoplay on last (letter) slide (static)
+        const isLast = index === slides.length - 1;
+        if(isLast){
+          clearInterval(timer);
+          timer = null;
+          return;
+        }
+        next();
+      }, SLIDE_MS);
+    }
+
+    function togglePause(){
+      paused = !paused;
+      if(pauseBtn) pauseBtn.textContent = paused ? "▶ Play" : "⏸ Pause";
+      if(paused){
+        if(timer) clearInterval(timer);
+        timer = null;
+      }else{
+        restartTimer();
+      }
+    }
+
+    // Buttons (hidden, but still functional if you ever show)
+    if(nextBtn) nextBtn.addEventListener("click", next);
+    if(prevBtn) prevBtn.addEventListener("click", prev);
+    if(pauseBtn) pauseBtn.addEventListener("click", togglePause);
+
+    // Keyboard controls
+    window.addEventListener("keydown", (e) => {
+      if(e.key === "ArrowRight") next();
+      if(e.key === "ArrowLeft") prev();
+      if(e.key === " ") { e.preventDefault(); togglePause(); }
+    });
+
+    // Swipe (mobile)
+    let startX = 0;
+    const deck = document.getElementById("deck");
+    deck.addEventListener("touchstart", (e) => startX = e.touches[0].clientX, {passive:true});
+    deck.addEventListener("touchend", (e) => {
+      const endX = e.changedTouches[0].clientX;
+      const dx = endX - startX;
+      if(Math.abs(dx) > 40){
+        dx < 0 ? next() : prev();
+      }
+    }, {passive:true});
+
+    // MUSIC
+    // NOTE: Browsers block autoplay audio until user interaction.
+    // We show a "Tap once to enable music" overlay until a click/tap happens.
+    function tryStartMusic(){
+      if(!bgMusic) return;
+
+      // If no source provided, do nothing
+      if(bgMusic.querySelectorAll("source").length === 0 && !bgMusic.src){
+        return;
+      }
+
+      bgMusic.play().then(() => {
+        audioGate.classList.remove("show");
+      }).catch(() => {
+        // show gate if blocked
+        audioGate.classList.add("show");
+      });
+    }
+
+    enableAudioBtn.addEventListener("click", () => {
+      audioGate.classList.remove("show");
+      tryStartMusic();
+    });
+
+    // Also attempt music on any click (good UX)
+    window.addEventListener("click", () => tryStartMusic(), { once:false });
+
+    // Init
+    setActive(index);
+    restartTimer();
+    // show gate early if audio configured
+    setTimeout(() => {
+      if(bgMusic && (bgMusic.querySelectorAll("source").length > 0 || bgMusic.src)){
+        audioGate.classList.add("show");
+      }
+    }, 600);
+  </script>
 </body>
 </html>
